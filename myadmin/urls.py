@@ -6,11 +6,6 @@ from myadmin.views import user
 
 
 
-
-from myadmin.views import member
-
-
-
 urlpatterns = [
     # 后台首页
     path('', index.index, name="myadmin_index"),
@@ -30,6 +25,4 @@ urlpatterns = [
     path('dologin', index.dologin, name="myadmin_dologin"),
     path('logout', index.logout, name="myadmin_logout"),
     path('verify', index.verify, name="myadmin_verify"), #验证码
-    # 会员管理路由
-    path('member/<int:pIndex>', member.index, name="myadmin_member_index"),  # 浏览会员
 ]

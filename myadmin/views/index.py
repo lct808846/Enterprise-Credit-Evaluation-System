@@ -16,8 +16,8 @@ def login(request):
 def dologin(request):
     '''执行登录'''
     #验证判断
-    verifycode = request.session['verifycode']
-    code = request.POST['code']
+    verifycode = request.session['verifycode'].lower()
+    code = request.POST['code'].lower()
     if verifycode != code:
         context = {'info':'验证码错误！'}
         return render(request,"myadmin/index/login.html",context)

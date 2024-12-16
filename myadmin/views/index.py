@@ -74,8 +74,8 @@ def verify(request):
         fill = (random.randrange(0, 255), 255, random.randrange(0, 255))
         draw.point(xy, fill=fill)
     #定义验证码的备选值
-    #str1 = 'ABCD123EFGHIJK456LMNOPQRS789TUVWXYZ0'
-    str1 = '0123456789'
+    str1 = 'ABCD123EFGHIJK456LMNOPQRS789TUVWXYZ0'
+    # str1 = '0123456789'
     #随机选取4个值作为验证码
     rand_str = ''
     for i in range(0, 4):

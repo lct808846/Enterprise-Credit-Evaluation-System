@@ -1,3 +1,6 @@
+import random
+from datetime import datetime
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -53,6 +56,39 @@ def dologin(request):
         print(err)
         # 登录账号不存在！
         return redirect(reverse('web_login')+"?typeinfo=3")
+
+def register(request):
+    '''加载注册页面'''
+    return render(request,"myapp/register.html")
+
+def doregister(request):
+    '''执行注册'''
+    try:
+        ob = User()
+        ob.username = request.POST['username']
+        ob.nickname = request.POST['nickname']
+        # 获取密码并md5
+        import hashlib
+        md5 = hashlib.md5()
+        rmd5 = hashlib.md5()
+        n = random.randint(100000, 999999)
+        s = request.POST['password'] + str(n)
+        r = request.POST['repassword'] + str(n)
+        md5.update(s.encode('utf-8'))
+        rmd5.update(r.encode('utf-8'))
+        if md5.hexdigest() == rmd5.hexdigest():
+            ob.password_hash = md5.hexdigest()
+            ob.password_salt = n
+            ob.status = 1
+            ob.create_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            ob.update_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            ob.save()
+            return redirect(reverse('web_login')+"?typeinfo=1")
+        else:
+            raise NameError
+    except Exception as err:
+        print(err)
+        return redirect(reverse('web_register')+"?typeinfo=1")
 
 def logout(request):
     '''执行退出'''

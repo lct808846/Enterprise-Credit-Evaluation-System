@@ -16,33 +16,26 @@
                     <h2 style="font-size:26px;">银行放贷指标查询系统</h2>
                 </div>
             
-                <form action="{% url 'web_dologin' %}" method="post">
+                <form action="{% url 'web_doregister' %}" method="post">
                     <div class="form-group">
                         <input type="text" name="username" class="form-control"  placeholder="登录账号">
                     </div>
                     <div class="form-group">
-                        <input type="password" name="pass" class="form-control" placeholder="登录密码">
+                        <input type="text" name="nickname" class="form-control"  placeholder="用户名">
                     </div>
                     <div class="form-group">
-                        <input type="text" name="code" style="display:inline;width:120px;float:left;" class="form-control" placeholder="验证码">
-                        <img src="{% url 'web_verify'%}" onclick="this.src='{% url 'web_verify' %}?sn='+Math.random()" style="float:right;margin:5px 20px;" />
+                        <input type="password" name="password" class="form-control" placeholder="登录密码">
                     </div>
-
-                    <button type="submit" style="margin-top:10px" class="btn btn-primary">登录</button>
-                    没有账号？<a href="{% url 'web_register' %}">去注册</a>
+                    <div class="form-group">
+                        <input type="password" name="repassword" class="form-control" placeholder="重复密码">
+                    </div>
+                    <button type="submit" style="margin-top:10px" class="btn btn-primary">注册</button>
+                    已有账号？<a href="{% url 'web_login' %}">去登录</a>
 
                     <div class="form-group">
                         <p class="login-box-msg" style="color:red">
-                            {% if request.GET.typeinfo == '2' %}
-                                验证码错误！
-                            {% elif request.GET.typeinfo == '3' %}
-                                登录账号不存在！
-                            {% elif request.GET.typeinfo == '4' %}
-                                此帐号已停用！
-                            {% elif request.GET.typeinfo == '5' %}
-                                登录密码错误！
-                            {% elif request.GET.typeinfo == '1' %}
-                                注册成功   
+                            {% if request.GET.typeinfo == '1' %}
+                                两次密码不一致！
                             {% endif %}
                         </p>
                     </div>

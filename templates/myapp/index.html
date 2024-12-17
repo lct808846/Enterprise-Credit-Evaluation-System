@@ -1,2 +1,3 @@
 {% load static %}
+hello {{request.session.webuser.nickname}}
 <li><a href="{% url 'web_logout' %}">退出</a></li>

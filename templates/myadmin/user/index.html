@@ -80,7 +80,7 @@
             <!-- /.box-body -->
             <div class="box-footer clearfix">
               <a role="button" href="{% url 'myadmin_user_add' %}" class="btn btn-primary btn-xs">
-                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加员工</a>
+                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加用户</a>
               <ul class="pagination pagination-sm no-margin pull-right">
                 <li><a href="{% url 'myadmin_user_index' pIndex|add:-1 %}?{{mywhere|join:'&'}}">&laquo;</a></li>
                 {% for p in plist %}

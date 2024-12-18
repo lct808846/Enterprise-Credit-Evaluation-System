@@ -51,6 +51,10 @@ def add(request):
 def insert(request):
     '''执行添加'''
     try:
+        # 检查用户名是否已存在
+        if User.objects.filter(username=request.POST['username']).exists():
+            context = {"info": "该用户已存在！"}
+            return render(request,"myadmin/info.html",context)  # 用户名已存在提示
         ob = User()
         ob.username = request.POST['username']
         ob.nickname = request.POST['nickname']
@@ -82,9 +86,9 @@ def delete(request,uid):
     '''删除信息'''
     try:
         ob = User.objects.get(id=uid)
-        ob.status = 9
-        ob.update_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ob.save()
+        # ob.status = 9
+        # ob.update_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        ob.delete()
         context={"info":"删除成功！"}
     except Exception as err:
         print(err)

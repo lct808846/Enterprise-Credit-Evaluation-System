@@ -36,6 +36,8 @@
                         <p class="login-box-msg" style="color:red">
                             {% if request.GET.typeinfo == '1' %}
                                 两次密码不一致！
+                            {% elif request.GET.typeinfo == '2' %}
+                                该账号已存在！
                             {% endif %}
                         </p>
                     </div>

@@ -3,11 +3,34 @@
 
 {% block content %}
 <div class="layui-container">
-    <blockquote class="layui-elem-quote">
-        <h1>银行放贷指标查询系统,欢迎 {{ request.session.webuser.nickname }}||  
-            <a style="color:chartreuse" href="{% url 'web_logout' %}">退出登录</a>
-        </h1>
-    </blockquote>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">银行放贷指标查询系统</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">欢迎 {{ request.session.webuser.nickname }}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">贷款申请</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">贷款状态</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">联系我们</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" style="color:chartreuse;" href="{% url 'web_logout' %}">退出登录</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
 
     {# 查询模块 #}
     <form action="{% url 'web_index_default' %}" method="get" class="mb-3">

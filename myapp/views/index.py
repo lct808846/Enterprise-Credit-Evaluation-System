@@ -88,6 +88,9 @@ def register(request):
 def doregister(request):
     '''执行注册'''
     try:
+        # 检查用户名是否已存在
+        if User.objects.filter(username=request.POST['username']).exists():
+            return redirect(reverse('web_register') + "?typeinfo=2")  # 用户名已存在提示
         ob = User()
         ob.username = request.POST['username']
         ob.nickname = request.POST['nickname']

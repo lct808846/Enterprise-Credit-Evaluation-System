@@ -1,0 +1,44 @@
+.pagination-container {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    margin: 20px 0;
+}
+
+.pagination {
+    display: inline-flex;
+    gap: 8px; /* 设置元素之间的间距 */
+    align-items: center; /* 垂直居中对齐 */
+}
+
+.page-form button,
+.current-page,
+.page-link {
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.page-form button[disabled] {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.current-page {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.page-link {
+    background-color: transparent;
+    color: #007bff;
+    border-color: #ced4da;
+}
+
+.page-link:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}

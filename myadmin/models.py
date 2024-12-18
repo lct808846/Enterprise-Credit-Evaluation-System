@@ -20,17 +20,16 @@ class User(models.Model):
     class Meta:
         db_table = "user"  # 更改表名
 
-#会员信息模型
-class Member(models.Model):
-    nickname = models.CharField(max_length=50)    #昵称
-    avatar = models.CharField(max_length=255)    #头像
-    mobile = models.CharField(max_length=50)    #电话
-    status = models.IntegerField(default=1)        #状态:1正常/2禁用/9删除
-    create_at = models.DateTimeField(default=datetime.now)    #创建时间
-    update_at = models.DateTimeField(default=datetime.now)    #修改时间
 
-    def toDict(self):
-        return {'id':self.id,'nickname':self.nickname,'avatar':self.avatar,'mobile':self.mobile,'status':self.status,'create_at':self.create_at.strftime('%Y-%m-%d %H:%M:%S'),'update_at':self.update_at.strftime('%Y-%m-%d %H:%M:%S')}
+class Astock(models.Model):
+    stockid = models.CharField(max_length=64)
+    stockname = models.CharField(max_length=64)
+    company = models.CharField(max_length=64)
+    createtime = models.CharField(max_length=64)  # 考虑使用DateTimeField或DateField以更好地处理日期时间数据
+    category = models.CharField(max_length=64)
+    desc = models.TextField(blank=True, null=True)  # blank 和 null 参数允许该字段为空
+
 
     class Meta:
-        db_table = "member"  # 更改表名
+        db_table = 'astock'  # 指定数据库表名
+

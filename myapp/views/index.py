@@ -1,20 +1,44 @@
 import random
 from datetime import datetime
 
-from django.shortcuts import render
+
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse
 
-from myadmin.models import User
+from myadmin.models import User,Astock
+from django.shortcuts import render
+
 
 
 # Create your views here.
-def index(request):
-    return redirect(reverse('web_index'))
 
-def webIndex(request):
-    return render(request,"myapp/index.html")
+def index(request):
+    return redirect(reverse('web_index_default'))
+
+def webIndex(request,pIndex=1):
+    kw = request.GET.get("keyword", "")
+    mywhere = ''
+
+    if kw:
+        list1 = Astock.objects.filter(company__contains=kw)
+        mywhere = '?keyword=%s' % kw
+    else:
+        list1 = Astock.objects.all()
+
+    p = Paginator(list1, 15)  # 每页显示15条记录
+
+    if pIndex <= 0:
+        pIndex = 1
+    if pIndex > p.num_pages:
+        pIndex = p.num_pages
+    pIndex = int(pIndex)
+    list = p.page(pIndex)
+    plist = p.page_range
+
+    return render(request, 'myapp/index.html',
+                  {'list': list, 'plist': plist, 'pIndex': pIndex, 'keyword': kw, 'mywhere': mywhere})
 
 def login(request):
     '''加载登录页面'''
@@ -45,7 +69,7 @@ def dologin(request):
             if user.password_hash == md5.hexdigest():
                 # 将当前登录成功用户信息以adminuser这个key放入到session中
                 request.session['webuser']=user.toDict()
-                return redirect(reverse('web_index'))
+                return redirect(reverse('web_index_default'))
             else:
                 # 登录密码错误
                 return redirect(reverse('web_login')+"?typeinfo=5")

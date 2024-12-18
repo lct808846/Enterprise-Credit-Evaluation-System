@@ -1,0 +1,42 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif; /* 添加字体 */
+}
+.background, #backgroundCanvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* 确保背景层在最底层 */
+}
+.background {
+    background: linear-gradient(270deg, #6c5ce7, #3498db, #a2d2ff, #6c5ce7);
+    background-size: 800% 800%;
+    animation: gradientBackground 20s ease infinite;
+}
+@keyframes gradientBackground {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.content {
+    position: relative;
+    z-index: 2; /* 确保内容层在最顶层 */
+    color: #fff; /* 文字颜色设为白色，以提高对比度 */
+    padding: 2em;
+
+}
+
+article {
+    margin: 2em auto;
+    max-width: 800px;
+    width: calc(100% - 4em);
+}
+h1, h2 {
+    color: #fff;
+}
+p {
+    line-height: 1.6;
+}

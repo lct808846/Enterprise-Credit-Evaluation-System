@@ -24,19 +24,5 @@ body, html {
 .content {
     position: relative;
     z-index: 2; /* 确保内容层在最顶层 */
-    color: #fff; /* 文字颜色设为白色，以提高对比度 */
-    padding: 2em;
 
-}
-
-article {
-    margin: 2em auto;
-    max-width: 800px;
-    width: calc(100% - 4em);
-}
-h1, h2 {
-    color: #fff;
-}
-p {
-    line-height: 1.6;
 }

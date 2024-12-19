@@ -33,15 +33,6 @@ class ShopMiddleware(object):
                 # 执行登录界面跳转
                 return redirect(reverse('web_login'))
 
-        # 移动端请求路由判断
-        # 定义网站移动端不用登录也可访问的路由url
-        urllist = ['/mobile/register', '/mobile/doregister']
-        # 判断当前请求是否是请求移动端,并且path不在urllist中
-        if re.match(r"^/mobile", path) and (path not in urllist):
-            # 判断当前用户是否没有登录移动端
-            if "mobileuser" not in request.session:
-                # 执行登录界面跳转
-                return redirect(reverse('mobile_register'))
 
         # 请求继续执行下去
         response = self.get_response(request)

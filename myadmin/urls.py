@@ -5,7 +5,6 @@ from myadmin.views import user
 
 
 
-
 urlpatterns = [
     # 后台首页
     path('', index.index, name="myadmin_index"),

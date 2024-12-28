@@ -1,62 +1,115 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'layouts/base-fullscreen.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注册</title>
-    <link rel="stylesheet" href="{% static 'myapp/css/style.css'%}">
-    <link rel="stylesheet" href="{% static 'myapp/css/common.css'%}">
-    <link rel="stylesheet" href="{% static 'myapp/css/bootstrap.css'%}">
-</head>
+{% block title %} 注册 {% endblock title %}
 
-<body>
-    <div class="background"></div>
-    <canvas id="backgroundCanvas"></canvas>
-    <div class="content">
-           <div class="container">
-        <h1 class="form-heading"></h1>
-        <div class="login-form">
-            <div class="main-div" style="margin: 150px auto 30px;">
-                <div class="panel">
-                    <h2 style="font-size:26px;">银行放贷指标查询系统</h2>
-                </div>
-            
-                <form action="{% url 'web_doregister' %}" method="post">
-                    <div class="form-group">
-                        <input type="text" name="username" class="form-control"  placeholder="登录账号">
-                    </div>
-                    <div class="form-group">
-                        <input type="text" name="nickname" class="form-control"  placeholder="用户名">
-                    </div>
-                    <div class="form-group">
-                        <input type="password" name="password" class="form-control" placeholder="登录密码">
-                    </div>
-                    <div class="form-group">
-                        <input type="password" name="repassword" class="form-control" placeholder="重复密码">
-                    </div>
-                    <button type="submit" style="margin-top:10px" class="btn btn-primary">注册</button>
-                    <a href="{% url 'web_login' %}">登录</a>
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
 
-                    <div class="form-group">
-                        <p class="login-box-msg" style="color:red">
-                            {% if request.GET.typeinfo == '1' %}
-                                两次密码不一致！
-                            {% elif request.GET.typeinfo == '2' %}
-                                该账号已存在！
-                            {% endif %}
-                        </p>
-                    </div>
-                </form>
+{% block content %}
+
+    <!-- Page content -->
+    <div class="container mt--8 pb-5">
+      <!-- Table -->
+      <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+        
+          <div class="card bg-secondary shadow border-0">
+            <div class="card-header bg-transparent pb-5">
+              <div class="text-muted text-center mt-2 mb-4">
+                注册
+              </div>
             </div>
+            <div class="card-body px-lg-5 py-lg-5">
+              <div class="text-center text-muted mb-4">
+
+                {% if msg %}
+                  <small>{{ msg | safe }}</small>
+                {% else %}
+                  添加您的凭证
+                {% endif %}  
+              
+              </div>
+
+              {% if not success %}
+
+                 <form method="post">
+
+                  {% csrf_token %}
+            
+                  <div class="form-group">
+                    <div class="input-group input-group-alternative mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                      </div>
+                      {{ form.username }}
+                    </div>
+                  </div>
+                  <span class="text-error">{{ form.username.errors }}</span>
+
+                  <div class="form-group">
+                    <div class="input-group input-group-alternative mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                      </div>
+                      {{ form.email }}
+                    </div>
+                  </div>
+                  <span class="text-error">{{ form.email.errors }}</span>
+
+                  <div class="form-group">
+                    <div class="input-group input-group-alternative">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                      </div>
+                      {{ form.password1 }}
+                    </div>
+                  </div>
+                  <span class="text-error">{{ form.password1.errors }}</span>
+
+                  <div class="form-group">
+                    <div class="input-group input-group-alternative">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                      </div>
+                      {{ form.password2 }}
+                    </div>
+                  </div>
+                  <span class="text-error">{{ form.password2.errors }}</span>
+
+                  <div class="row my-4">
+                    <div class="col-12">
+                      <div class="custom-control custom-control-alternative custom-checkbox">
+                        <input class="custom-control-input" id="customCheckRegister" type="checkbox">
+                        <label class="custom-control-label" for="customCheckRegister">
+                          <span class="text-muted">我同意 <a href="#!">隐私政策</a></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-primary mt-4">创建账户</button>
+                  </div>
+                </form>
+
+              {% endif %}  
+  
+            </div>
+          </div>
+
         </div>
-    </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-3"></div>
+        <div class="col-3">
+          <a href="{% url 'web_login' %}" class="text-light"><small>登录</small></a>
+        </div>
+      </div>
 
     </div>
-    </div>
-    <script src="{% static 'myapp/js/script.js'%}"></script>
-    <script src="{% static 'myapp/js/jquery.min.js'%}"></script>
-    <script src="{% static 'myapp/js/bootstrap.min.js'%}"></script>
-</body>
-</html>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}{% endblock javascripts %}

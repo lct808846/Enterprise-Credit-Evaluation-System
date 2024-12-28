@@ -24,7 +24,7 @@
               <div class="box-tools">
                 <form action="{% url 'myadmin_user_index' 1 %}" method="get">
                 <div class="input-group input-group-sm" style="width:150px;">
-                  <input type="text" name="keyword" class="form-control pull-right" placeholder="账号/昵称">
+                  <input type="text" name="keyword" class="form-control pull-right" placeholder="用户名/邮箱">
 
                   <div class="input-group-btn">
                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
@@ -38,33 +38,33 @@
               <table class="table table-hover">
                 <tr>
                   <th>ID</th>
-                  <th>账号</th>
-                  <th>昵称</th>
+                  <th>用户名</th>
+                  <th>邮箱</th>
                   <th>当前状态</th>
                   <th>添加时间</th>
-                  <th>修改时间</th>
+                  <th>上次登录时间</th>
                   <th>操作</th>
                 </tr>
                 {% for vo in userlist %}
                 <tr>
                   <td>{{ vo.id }}</td>
                   <td>{{ vo.username }}</td>
-                  <td>{{ vo.nickname }}</td>
+                  <td>{{ vo.email }}</td>
                   <td>
-                    {% if vo.status == 1 %}
-                      <span style="color:green">正常</span>
-                    {% elif vo.status == 2 %}
-                      <span style="color:red">禁停</span>
-                    {% elif vo.status == 6 %}
+                    {% if vo.is_superuser == 1 %}
                       <span style="color:blue">管理员</span>
-                    {% elif vo.status == 9 %}
+                    {% elif vo.is_active == 1 %}
+                      <span style="color:green">正常</span>
+                    {% elif vo.is_active == 0 %}
+                      <span style="color:red">禁停</span>
+                    {% elif vo.is_active == 9 %}
                       <span style="color:red">已删除</span>
                     {% else %}
                       <span style="color:red">未知状态</span>
                     {% endif %}
                   </td>
-                  <td width="15%">{{ vo.create_at|date:'Y-m-d H:i:s' }}</td>
-                  <td width="15%">{{ vo.update_at|date:'Y-m-d H:i:s' }}</td>
+                  <td width="15%">{{ vo.date_joined|date:'Y-m-d H:i:s' }}</td>
+                  <td width="15%">{{ vo.last_login|date:'Y-m-d H:i:s' }}</td>
                   <td width="22%">
                     <a href="{% url 'myadmin_user_edit' vo.id %}" class="btn btn-success btn-xs">
                       <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 编辑</a>

@@ -26,12 +26,12 @@ class ShopMiddleware(object):
                 # 执行登录界面跳转
                 return redirect(reverse('myadmin_login'))
 
-        # 判断当前请求是否是访问网站前台
-        if re.match(r"^/web", path):
-            # 判断当前用户是否没有登录
-            if "webuser" not in request.session:
-                # 执行登录界面跳转
-                return redirect(reverse('web_login'))
+        # # 判断当前请求是否是访问网站前台
+        # if re.match(r"^/web", path):
+        #     # 判断当前用户是否没有登录
+        #     if "webuser" not in request.session:
+        #         # 执行登录界面跳转
+        #         return redirect(reverse('web_login'))
 
 
         # 请求继续执行下去

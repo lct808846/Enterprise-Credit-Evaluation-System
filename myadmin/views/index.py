@@ -1,8 +1,17 @@
+from django.contrib.auth.hashers import check_password
+from django.forms import model_to_dict
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
-from myadmin.models import User
+from django.contrib.auth.models import User
+
+def toDict(self):
+    return {'id': self.id, 'password': self.password, 'last_login': self.last_login.strftime('%Y-%m-%d %H:%M:%S'),
+            'is_superuser': self.is_superuser, 'username': self.username, 'first_name': self.first_name,
+            'last_name': self.last_name, 'email': self.email,
+            'is_staff': self.is_staff, 'is_active': self.is_active, 'date_joined': self.date_joined.strftime('%Y-%m-%d %H:%M:%S')}
+
 
 def index(request):
     return render(request,'myadmin/index/index.html', {'active_menu': 'index'})
@@ -26,17 +35,14 @@ def dologin(request):
         #根据登录账号获取用户信息
         user = User.objects.get(username=request.POST['username'])
         # 校验当前用户状态是否是管理员
-        if user.status == 6:
-            #获取密码并md5
-            import hashlib
-            md5 = hashlib.md5()
-            n = user.password_salt
-            s = request.POST['pass']+str(n)
-            md5.update(s.encode('utf-8'))
+        if user.is_superuser == 1:
+            #获取密码
+            s = request.POST['password']
             # 校验密码是否正确
-            if user.password_hash == md5.hexdigest():
+            is_password_correct = check_password(s, user.password)
+            if is_password_correct == 1:
                 # 将当前登录成功用户信息以adminuser这个key放入到session中
-                request.session['adminuser']=user.toDict()
+                request.session['adminuser']=toDict(user)
                 return redirect(reverse('myadmin_index'))
             else:
                 context={"info":"登录密码错误！"}
@@ -59,9 +65,9 @@ def verify(request):
     import random
     from PIL import Image, ImageDraw, ImageFont
     #定义变量，用于画面的背景色、宽、高
-    #bgcolor = (random.randrange(20, 100), random.randrange(
-    #    20, 100),100)
-    bgcolor = (242,164,247)
+    bgcolor = (random.randrange(20, 100), random.randrange(
+       20, 100),100)
+    # bgcolor = (242,164,247)
     width = 100
     height = 25
     #创建画面对象

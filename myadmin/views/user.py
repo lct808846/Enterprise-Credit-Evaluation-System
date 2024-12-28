@@ -1,3 +1,4 @@
+from lib2to3.fixes.fix_input import context
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -6,25 +7,26 @@ from django.core.paginator import Paginator
 from datetime import datetime
 import random
 
-from myadmin.models import User
+from django.contrib.auth.models import User
+
+
 
 def index(request,pIndex=1):
     '''浏览信息'''
-    umod = User.objects
     mywhere=[]
-    list = umod.filter(status__lt=9)
+    list = User.objects.all()
 
     # 获取、判断并封装关keyword键搜索
     kw = request.GET.get("keyword",None)
     if kw:
-        # 查询员工账号或昵称中只要含有关键字的都可以
-        list = list.filter(Q(username__contains=kw) | Q(nickname__contains=kw))
+        # 查询用户账号或邮箱中只要含有关键字的都可以
+        list = list.filter(Q(username__contains=kw) | Q(email__contains=kw))
         mywhere.append("keyword="+kw)
 
     # 获取、判断并封装状态status搜索条件
     status = request.GET.get('status','')
     if status != '':
-        list = list.filter(status=status)
+        list = list.filter(is_active=status)
         mywhere.append("status="+status)
 
     #执行分页处理
@@ -57,22 +59,15 @@ def insert(request):
             return render(request,"myadmin/info.html",context)  # 用户名已存在提示
         ob = User()
         ob.username = request.POST['username']
-        ob.nickname = request.POST['nickname']
-        #获取密码并md5
-        import hashlib
-        md5 = hashlib.md5()
-        rmd5 = hashlib.md5()
-        n = random.randint(100000, 999999)
-        s = request.POST['password']+str(n)
-        r = request.POST['repassword']+str(n)
-        md5.update(s.encode('utf-8'))
-        rmd5.update(r.encode('utf-8'))
-        if md5.hexdigest() == rmd5.hexdigest():
-            ob.password_hash = md5.hexdigest()
-            ob.password_salt = n
-            ob.status = 1
-            ob.create_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            ob.update_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        ob.email = request.POST['email']
+        #获取密码
+        s = request.POST['password']
+        r = request.POST['repassword']
+        if s == r:
+            ob.set_password(s)
+            ob.is_staff = 0
+            ob.is_superuser = 0
+            ob.date_joined = datetime.now()
             ob.save()
             context={"info":"添加成功！"}
         else:
@@ -86,10 +81,12 @@ def delete(request,uid):
     '''删除信息'''
     try:
         ob = User.objects.get(id=uid)
-        # ob.status = 9
-        # ob.update_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ob.delete()
-        context={"info":"删除成功！"}
+        if ob.id != request.session['adminuser']['id']:
+            # ob.is_active = 9
+            ob.delete()
+            context={"info":"删除成功！"}
+        else:
+            context={"info":"删除失败"}
     except Exception as err:
         print(err)
         context={"info":"删除失败"}
@@ -112,8 +109,9 @@ def update(request,uid):
     '''执行编辑信息'''
     try:
         ob = User.objects.get(id=uid)
-        ob.nickname = request.POST['nickname']
-        ob.status = request.POST['status']
+        ob.email = request.POST['email']
+        ob.is_superuser = request.POST['is_superuser']
+        ob.is_active = request.POST['is_active']
         ob.update_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         ob.save()
         context={"info":"修改成功！"}
@@ -137,14 +135,8 @@ def doresetpass(request,uid):
     '''执行编辑信息'''
     try:
         ob = User.objects.get(id=uid)
-        #获取密码并md5
-        import hashlib
-        md5 = hashlib.md5()
-        n = random.randint(100000, 999999)
-        s = request.POST['password']+str(n) 
-        md5.update(s.encode('utf-8'))
-        ob.password_hash = md5.hexdigest()
-        ob.password_salt = n
+        s = request.POST['password']
+        ob.set_password(s)
         ob.save()
         context={"info":"密码重置成功！"}
     except Exception as err:

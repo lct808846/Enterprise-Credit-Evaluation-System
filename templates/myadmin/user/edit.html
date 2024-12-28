@@ -31,42 +31,39 @@
                   <label for="inputEmail3" class="col-sm-2 control-label">账号：</label>
 
                   <div class="col-sm-4">
-                    <input type="text" name="username" value="{{user.username}}" class="form-control" disabled readonly id="inputText1" placeholder="员工账号" />
+                    <input type="text" name="username" value="{{user.username}}" class="form-control" disabled readonly id="inputText1" placeholder="用户名" />
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
 
                   <div class="col-sm-4">
-                    <input type="text" name="nickname" value="{{user.nickname}}" class="form-control" id="inputText2" placeholder="昵称" />
+                    <input type="text" name="email" value="{{user.email}}" class="form-control" id="inputText2" placeholder="邮箱" />
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="inputEmail3"  class="col-sm-2 control-label">添加时间：</label>
 
                   <div class="col-sm-4">
-                    {{ user.create_at|date:'Y-m-d H:i:s' }}
+                    {{ user.date_joined|date:'Y-m-d H:i:s' }}
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="inputEmail3" class="col-sm-2 control-label">修改时间：</label>
+                  <label for="inputEmail3" class="col-sm-2 control-label">上次登录时间：</label>
 
                   <div class="col-sm-4">
-                    {{ user.update_at|date:'Y-m-d H:i:s' }}
+                    {{ user.last_login|date:'Y-m-d H:i:s' }}
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 control-label">当前状态：</label>
                   <div class="controls">
                     &nbsp; &nbsp;
-                    <input type="radio" name="status" class="input-xlarge" value="1" 
-                    {% if user.status == 1 %}checked{% endif %} /> 正常
+                    <input type="radio" name="is_active" class="input-xlarge" value="0"/> 正常
                      &nbsp; &nbsp; 
-                    <input type="radio" name="status" class="input-xlarge" value="2" 
-                    {% if user.status == 2 %}checked{% endif %} /> 禁用
+                    <input type="radio" name="is_active" class="input-xlarge" value="1"/> 禁用
                      &nbsp; &nbsp; 
-                    <input type="radio" name="status" class="input-xlarge" value="6" 
-                    {% if user.status == 6 %}checked{% endif %} /> 管理员
+                    <input type="radio" name="is_superuser" class="input-xlarge" value="1"/> 管理员
                   </div>
                 </div>
               </div>

@@ -2,7 +2,8 @@
 from django.urls import path
 from myadmin.views import index
 from myadmin.views import user
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [

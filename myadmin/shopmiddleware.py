@@ -18,20 +18,14 @@ class ShopMiddleware(object):
 
         # 后台请求路由判断
         # 定义网站后台不用登录也可访问的路由url
-        urllist = ['/myadmin/login','/myadmin/dologin','/myadmin/logout','/myadmin/verify']
+        urllist = ['/admin/login','/admin/dologin','/admin/logout','/admin/verify']
         # 判断当前请求是否是访问网站后台,并且path不在urllist中
-        if re.match(r"^/myadmin",path) and (path not in urllist):
+        if re.match(r"^/admin",path) and (path not in urllist):
             # 判断当前用户是否没有登录
             if "adminuser" not in request.session:
                 # 执行登录界面跳转
                 return redirect(reverse('myadmin_login'))
 
-        # # 判断当前请求是否是访问网站前台
-        # if re.match(r"^/web", path):
-        #     # 判断当前用户是否没有登录
-        #     if "webuser" not in request.session:
-        #         # 执行登录界面跳转
-        #         return redirect(reverse('web_login'))
 
 
         # 请求继续执行下去

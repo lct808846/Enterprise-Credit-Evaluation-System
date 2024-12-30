@@ -1,0 +1,107 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}公司简介 - {{ company.firm_name }}{% endblock title %}
+
+{% block content %}
+    <div class="header pb-6 d-flex align-items-center"
+         style="min-height: 500px; background-image: url(/assets/img/theme/profile-cover.jpg); background-size: cover; background-position: center top;">
+        <!-- 遮罩 -->
+        <span class="mask bg-gradient-default opacity-8"></span>
+        <!-- 标题容器 -->
+        <div class="container-fluid d-flex align-items-center">
+            <div class="row">
+                <div class="col-lg-7 col-md-10">
+                    <h1 class="display-2 text-white">{{ company.firm_name }}</h1>
+                    <br>
+                    <a href="javascript:history.back();" class="btn btn-neutral">返回</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页面内容 -->
+    <div class="container-fluid mt--6">
+        <div class="col-xl-8 order-xl-1">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">公司详情</h3>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <h6 class="heading-small text-muted mb-4">公司信息</h6>
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-firm-name">公司名称</label>
+                                        <input type="text" id="input-firm-name" class="form-control"
+                                               placeholder="公司名称" value="{{ company.firm_name }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-legal-rep">法定代表人</label>
+                                        <input type="text" id="input-legal-rep" class="form-control"
+                                               placeholder="法定代表人" value="{{ company.legal_rep }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-est-date">成立日期</label>
+                                        <input type="date" id="input-est-date" class="form-control"
+                                               value="{{ company.est_date }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-open-date">开业日期</label>
+                                        <input type="date" id="input-open-date" class="form-control"
+                                               value="{{ company.open_date }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-bd-longitude">经度</label>
+                                        <input type="number" step="any" id="input-bd-longitude" class="form-control"
+                                               placeholder="经度" value="{{ company.bd_longitude }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-bd-latitude">纬度</label>
+                                        <input type="number" step="any" id="input-bd-latitude" class="form-control"
+                                               placeholder="纬度" value="{{ company.bd_latitude }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-reg-cap">注册资本（万元）</label>
+                                        <input type="number" step="any" id="input-reg-cap" class="form-control"
+                                               placeholder="无" value="{{ company.reg_cap }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-4"/>
+                            <!-- 经营范围 -->
+                            <div class="pl-lg-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">经营范围</label>
+                                    <textarea rows="4" class="form-control" placeholder="请输入经营范围"
+                                              readonly>{{ company.ope_scope }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock content %}

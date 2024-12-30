@@ -14,7 +14,11 @@ def toDict(self):
 
 
 def index(request):
-    return render(request,'myadmin/index/index.html', {'active_menu': 'index'})
+    user_count = User.objects.count()  # 获取用户总数
+    context = {
+        'user_count': user_count,
+    }
+    return render(request,'myadmin/index/index.html', context)
 
 
 def login(request):

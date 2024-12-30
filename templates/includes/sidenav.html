@@ -1,3 +1,4 @@
+
 <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
   <div class="scrollbar-inner">
     <!-- Brand -->
@@ -16,7 +17,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if 'tables' in segment %} active {% endif %}" href="/tables.html">
+            <a class="nav-link {% if 'tables' in segment %} active {% endif %}" href="{% url 'tables' %}">
               <i class="ni ni-bullet-list-67 text-default"></i>
               <span class="nav-link-text">企业基本信息</span>
             </a>
@@ -34,7 +35,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if 'profile' in segment %} active {% endif %}" href="/profile.html">
+            <a class="nav-link {% if 'profile' in segment %} active {% endif %}" href="{% url 'profile' %}">
               <i class="ni ni-single-02 text-yellow"></i>
               <span class="nav-link-text">个人资料</span>
             </a>

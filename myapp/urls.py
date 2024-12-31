@@ -14,6 +14,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(next_page='/login'), name="web_logout"),
     path('tables/', index.table_view, name='tables'),
     path('company/<str:id>/', index.company_detail, name='company_detail'),
+    path('score/<str:id>/', index.score, name='score'),
     path('profile/', index.profile, name='profile'),
     path('update_profile_pic/', index.update_profile_pic, name='update_profile_pic'),
     path('query', index.query, name='query'),
@@ -21,4 +22,5 @@ urlpatterns = [
     path('toggle_favorite',index.toggle_favorite, name='toggle_favorite'),
     path('map', index.map, name='map'),
     path('settings', index.settings, name='settings'),
+    path('update_weights', index.update_weights, name='update_weights'),
 ]

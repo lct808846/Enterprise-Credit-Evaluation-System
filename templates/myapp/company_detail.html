@@ -14,6 +14,7 @@
                     <h1 class="display-2 text-white">{{ company.firm_name }}</h1>
                     <br>
                     <a href="javascript:history.back();" class="btn btn-neutral">返回</a>
+                    <a href="{% url 'score' company.id %}" class="btn btn-neutral">查看评分</a>
                 </div>
             </div>
         </div>

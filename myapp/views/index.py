@@ -1,16 +1,23 @@
 from django import template
+from django.contrib import messages
 
 from django.http import HttpResponse,JsonResponse
 from django.shortcuts import redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files.storage import default_storage
-from myadmin.models import EnterpriseAll, Profile, Favorite
+from django.urls import reverse
+
+from myadmin.models import EnterpriseAll, Profile, Favorite,ScoreWeight
 from ..forms import LoginForm, SignUpForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.template import loader
+from ..calculate import calculate_company_score
+
 # Create your views here.
+
+
 
 @login_required(login_url="/login/")
 def index(request):
@@ -74,7 +81,7 @@ def table_view(request):
     else:
         companies = EnterpriseAll.objects.all()
 
-    items_per_page = 25
+    items_per_page = 30
     paginator = Paginator(companies, items_per_page)
     page_number = request.GET.get('page', 1)
 
@@ -122,6 +129,16 @@ def company_detail(request, id):
     return render(request, 'myapp/company_detail.html', context)
 
 @login_required(login_url="/login/")
+def score(request, id):
+    company = EnterpriseAll.objects.get(id=id)
+    company.score = calculate_company_score(company)
+    context = {
+        'company': company,
+        'score': company.score,
+    }
+    return render(request, 'myapp/score.html', context)
+
+@login_required(login_url="/login/")
 def profile(request):
     context = {}
     context['segment'] = 'profile'
@@ -159,7 +176,7 @@ def query(request):
     else:
         companies = EnterpriseAll.objects.all()
 
-    items_per_page = 5
+    items_per_page = 30
     paginator = Paginator(companies, items_per_page)
     page_number = request.GET.get('page', 1)
 
@@ -175,6 +192,10 @@ def query(request):
     if request.user.is_authenticated:
         user_favorites = set(Favorite.objects.filter(user=request.user).values_list('company_id', flat=True))
 
+    # 为每家公司计算评分
+    for company in page_obj.object_list:
+        company.score = calculate_company_score(company)
+
     context['companies'] = page_obj
     context['is_paginated'] = True if paginator.num_pages > 1 else False
     context['paginator'] = paginator
@@ -189,6 +210,7 @@ def query(request):
             data.append({
                 'id': company.id,
                 'firm_name': company.firm_name,
+                'score': company.score,  # 包含评分
                 'favorited': company.id in user_favorites,  # 包含收藏状态
             })
         return JsonResponse({
@@ -249,6 +271,10 @@ def favorites(request):
     if request.user.is_authenticated:
         user_favorites = set(Favorite.objects.filter(user=request.user).values_list('company_id', flat=True))
 
+    # 为每家公司计算评分
+    for company in page_obj.object_list:
+        company.score = calculate_company_score(company)
+
     context['companies'] = page_obj
     context['is_paginated'] = True if paginator.num_pages > 1 else False
     context['paginator'] = paginator
@@ -263,6 +289,7 @@ def favorites(request):
             data.append({
                 'id': company.id,
                 'firm_name': company.firm_name,
+                'score': company.score,  # 包含评分
                 'favorited': company.id in user_favorites,  # 包含收藏状态
             })
         return JsonResponse({
@@ -279,3 +306,31 @@ def favorites(request):
 @login_required(login_url="/login/")
 def settings(request):
     return render(request, 'myapp/settings.html', {'segment': 'settings'})
+
+
+@login_required(login_url="/login/")
+def update_weights(request):
+    if request.method == 'POST':
+        try:
+            execute_weight = float(request.POST.get('execute_weight'))
+            case_weight = float(request.POST.get('case_weight'))
+            money_weight = float(request.POST.get('money_weight'))
+            judge_weight = float(request.POST.get('judge_weight'))
+
+            total_weight = execute_weight + case_weight + money_weight + judge_weight
+            if abs(total_weight - 1) > 1e-6:  # 检查权重之和是否接近1
+                messages.error(request, "权重之和必须为1，请重新输入。")
+                return redirect(reverse('settings'))
+
+            weights, created = ScoreWeight.objects.get_or_create(pk=1)
+            weights.execute_weight = execute_weight
+            weights.case_weight = case_weight
+            weights.money_weight = money_weight
+            weights.judge_weight = judge_weight
+            weights.save()
+
+            messages.success(request, "权重已成功更新。")
+        except Exception as e:
+            messages.error(request, f"更新权重时出错: {str(e)}")
+
+    return redirect(reverse('settings'))

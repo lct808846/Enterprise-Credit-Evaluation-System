@@ -56,3 +56,30 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f'{self.user.username} 收藏了 {self.company.firm_name}'
+
+class ScoreWeight(models.Model):
+    execute_weight = models.FloatField(default=0.25)
+    case_weight = models.FloatField(default=0.25)
+    money_weight = models.FloatField(default=0.25)
+    judge_weight = models.FloatField(default=0.25)
+
+    class Meta:
+        db_table = 'score_weight'
+        verbose_name = '评分权重'
+        verbose_name_plural = '评分权重'
+
+    def save(self, *args, **kwargs):
+        # 确保只有一个权重实例存在
+        if not self.pk and ScoreWeight.objects.exists():
+            raise ValueError("只能有一个评分权重实例")
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def get_default_weights():
+        weights, created = ScoreWeight.objects.get_or_create(pk=1)
+        return {
+            'execute': weights.execute_weight,
+            'case': weights.case_weight,
+            'money': weights.money_weight,
+            'judge': weights.judge_weight,
+        }

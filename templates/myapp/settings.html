@@ -3,34 +3,59 @@
 {% block title %}设置{% endblock title %}
 
 {% block content %}
-<div class="header pb-6 d-flex align-items-center"
-     style="min-height: 200px; background-image: url(/assets/img/theme/profile-cover.jpg); background-size: cover; background-position: center top;">
-    <!-- Mask -->
-    <span class="mask bg-gradient-default opacity-8"></span>
-</div>
-<!-- 页面内容 -->
-<div class="container-fluid mt--3"> <!-- 修改了这里的上边距 -->
-    <div class="row">
-        <div class="col-xl-8 order-xl-1">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col-8">
-                            <h3 class="mb-0">设置</h3>
+    <div class="header pb-6 d-flex align-items-center"
+         style="min-height: 200px; background-image: url(/assets/img/theme/profile-cover.jpg); background-size: cover; background-position: center top;">
+        <!-- Mask -->
+        <span class="mask bg-gradient-default opacity-8"></span>
+    </div>
+    <!-- 页面内容 -->
+    <div class="container-fluid mt--3"> <!-- 修改了这里的上边距 -->
+        <div class="row">
+            <div class="col-xl-8 order-xl-1">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h3 class="mb-0">设置</h3>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <form action="#" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <p>此页面用于管理您的账户设置。当前未提供具体设置项。</p>
-                        <button type="submit" class="btn btn-success" disabled>保存更改</button>
-                    </form>
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                    <div class="card-body">
+                        <form action="{% url 'update_weights' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <p>在此页面管理评分权重。</p>
+
+                            <div class="form-group">
+                                <label for="id_execute_weight">执行情况权重</label>
+                                <input type="number" step="0.01" id="id_execute_weight" name="execute_weight"
+                                       class="form-control" value="{{ weights.execute }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_case_weight">案件数量权重</label>
+                                <input type="number" step="0.01" id="id_case_weight" name="case_weight"
+                                       class="form-control" value="{{ weights.case }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_money_weight">总金额权重</label>
+                                <input type="number" step="0.01" id="id_money_weight" name="money_weight"
+                                       class="form-control" value="{{ weights.money }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_judge_weight">判决情况权重</label>
+                                <input type="number" step="0.01" id="id_judge_weight" name="judge_weight"
+                                       class="form-control" value="{{ weights.judge }}">
+                            </div>
+
+                            <button type="submit" class="btn btn-success">保存更改</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 {% endblock content %}
 

@@ -42,7 +42,7 @@
                                             <span class="name mb-0 text-sm">{{ company.firm_name }}</span>
                                         </div>
                                     </td>
-                                    <td>100</td>
+                                    <td>{{ company.score }}</td>
                                     <td>
                                         <!-- 收藏按钮 -->
                                         <button class="favorite-btn {% if company.id in user_favorites %}active{% endif %}"
@@ -201,7 +201,7 @@
                                                 <span class="name mb-0 text-sm">${company.firm_name}</span>
                                             </div>
                                         </td>
-                                        <td>100</td>
+                                        <td>${company.score}</td>
                                         <td>
                                             <!-- 收藏按钮 -->
                                             <button class="favorite-btn ${company.favorited ? 'active' : ''}" 

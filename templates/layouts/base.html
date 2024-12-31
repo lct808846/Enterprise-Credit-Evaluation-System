@@ -17,48 +17,71 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="canonical" href="https://appseed.us/admin-dashboards/django-dashboard-argon">
-  
-  <title>
-    银行放贷指标查询系统 - {% block title %} {% endblock %}
-  </title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="canonical" href="https://appseed.us/admin-dashboards/django-dashboard-argon">
+    <link rel="stylesheet" href="https://cache.amap.com/lbs/static/main1119.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>
+        银行放贷指标查询系统 - {% block title %} {% endblock %}
+    </title>
 
-  <!-- Favicon - loaded as static -->
-  <link rel="icon" href="/static/assets/img/brand/favicon.png" type="image/png">
-  <!-- Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
-  <!-- Icons -->
-  <link rel="stylesheet" href="/static/assets/vendor/nucleo/css/nucleo.css" type="text/css">
-  <link rel="stylesheet" href="/static/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css" type="text/css">
-  <!-- Page plugins -->
-  <!-- Argon CSS -->
-  <link rel="stylesheet" href="/static/assets/css/argon.css?v=1.2.0" type="text/css">
+    <!-- Favicon - loaded as static -->
+    <link rel="icon" href="/static/assets/img/brand/favicon.png" type="image/png">
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+    <!-- Icons -->
+    <link rel="stylesheet" href="/static/assets/vendor/nucleo/css/nucleo.css" type="text/css">
+    <link rel="stylesheet" href="/static/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css" type="text/css">
+    <!-- Page plugins -->
+    <!-- Argon CSS -->
+    <link rel="stylesheet" href="/static/assets/css/argon.css?v=1.2.0" type="text/css">
+  <style>
+    .favorite-btn {
+        background: none; /* 移除背景色 */
+        border: none;     /* 移除边框 */
+        padding: 0;       /* 移除内边距 */
+        cursor: pointer;  /* 鼠标悬停时显示指针 */
+        color: gray;      /* 默认情况下，图标为灰色 */
+        transition: color 0.3s ease;
+        outline: none;    /* 移除聚焦时的默认边框 */
+    }
 
-  <!-- Specific CSS goes HERE -->
-  {% block stylesheets %}{% endblock stylesheets %}
+    .favorite-btn.active {
+        color: red; /* 收藏时，图标变为红色 */
+    }
+
+    .favorite-btn:hover {
+        color: darkred; /* 悬停时改变颜色以提供反馈 */
+    }
+
+    .favorite-btn:focus {
+        outline: none; /* 确保聚焦时没有边框 */
+    }
+</style>
+    <!-- Specific CSS goes HERE -->
+    {% block stylesheets %}{% endblock stylesheets %}
 
 </head>
 
 <body class="">
 
-  {% include "includes/sidenav.html" %}
+{% include "includes/sidenav.html" %}
 
-  <div class="main-content" id="panel">
+<div class="main-content" id="panel">
 
     {% include "includes/navigation.html" %}
 
     {% block content %}{% endblock content %}
 
-  </div>
+</div>
 
-  {% include "includes/scripts.html" %}
+{% include "includes/scripts.html" %}
 
-  <!-- Specific JS goes HERE --> 
-  {% block javascripts %}{% endblock javascripts %}
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock javascripts %}
 
-  <script src="/static/assets/js/argon.js?v=1.2.0"></script>
+<script src="/static/assets/js/argon.js?v=1.2.0"></script>
 
 </body>
 

@@ -28,14 +28,14 @@
                 {% csrf_token %}
               <div class="box-body">
                 <div class="form-group">
-                  <label for="inputEmail3" class="col-sm-2 control-label">账号：</label>
+                  <label for="inputEmail3" class="col-sm-2 control-label">用户名：</label>
 
                   <div class="col-sm-4">
                     <input type="text" name="username" value="{{user.username}}" class="form-control" disabled readonly id="inputText1" placeholder="用户名" />
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
+                  <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
 
                   <div class="col-sm-4">
                     <input type="text" name="email" value="{{user.email}}" class="form-control" id="inputText2" placeholder="邮箱" />
@@ -58,12 +58,12 @@
                 <div class="form-group">
                   <label class="col-sm-2 control-label">当前状态：</label>
                   <div class="controls">
-                    &nbsp; &nbsp;
-                    <input type="radio" name="is_active" class="input-xlarge" value="0"/> 正常
+                    <input type="radio" name="is_active" class="input-xlarge" value="1" 
+                    {% if user.is_active == 1 %}checked{% endif %} /> 正常
                      &nbsp; &nbsp; 
-                    <input type="radio" name="is_active" class="input-xlarge" value="1"/> 禁用
-                     &nbsp; &nbsp; 
-                    <input type="radio" name="is_superuser" class="input-xlarge" value="1"/> 管理员
+                    <input type="radio" name="is_active" class="input-xlarge" value="0" 
+                    {% if user.is_active == 0 %}checked{% endif %} /> 禁用
+                     &nbsp; &nbsp;
                   </div>
                 </div>
               </div>

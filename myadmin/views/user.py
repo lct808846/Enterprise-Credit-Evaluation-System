@@ -110,7 +110,6 @@ def update(request,uid):
     try:
         ob = User.objects.get(id=uid)
         ob.email = request.POST['email']
-        ob.is_superuser = request.POST['is_superuser']
         ob.is_active = request.POST['is_active']
         ob.update_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         ob.save()

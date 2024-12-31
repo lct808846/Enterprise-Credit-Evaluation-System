@@ -4,7 +4,7 @@ from django.http import HttpResponse,JsonResponse
 from django.shortcuts import redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files.storage import default_storage
-from myadmin.models import EnterpriseAll,Profile
+from myadmin.models import EnterpriseAll, Profile, Favorite
 from ..forms import LoginForm, SignUpForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
@@ -18,27 +18,6 @@ def index(request):
 
     html_template = loader.get_template('myapp/index.html')
     return HttpResponse(html_template.render(context, request))
-
-
-# @login_required(login_url="/login/")
-# def pages(request):
-#     context = {}
-#     # All resource paths end in .html.
-#     # Pick out the html file name from the url. And load that template.
-#     try:
-#         load_template = request.path.split('/')[-1]
-#         context['segment'] = load_template
-#         html_template = loader.get_template('myapp/' + load_template)
-#         return HttpResponse(html_template.render(context, request))
-#
-#     except template.TemplateDoesNotExist:
-#
-#         html_template = loader.get_template('myapp/404.html')
-#         return HttpResponse(html_template.render(context, request))
-#
-#     except:
-#         html_template = loader.get_template('myapp/500.html')
-#         return HttpResponse(html_template.render(context, request))
 
 def Login(request):
     form = LoginForm(request.POST or None)
@@ -148,7 +127,15 @@ def profile(request):
     context['segment'] = 'profile'
     return render(request, 'myapp/profile.html', context)
 
-@login_required
+@login_required(login_url="/login/")
+def map(request):
+    context = {}
+    context['segment'] = 'map'
+    kw = request.GET.get('keyword', '')
+    context['keyword'] = kw
+    return render(request, 'myapp/map.html', context)
+
+@login_required(login_url="/login/")
 def update_profile_pic(request):
     if request.method == 'POST':
         profile_pic = request.FILES.get('profile_pic')
@@ -160,3 +147,135 @@ def update_profile_pic(request):
             user_profile.profile_picture = profile_pic
             user_profile.save()
     return redirect('profile')
+
+@login_required(login_url="/login/")
+def query(request):
+    context = {}
+    kw = request.GET.get('keyword', '')
+
+    # 如果有关键词，则根据关键词过滤公司列表
+    if kw:
+        companies = EnterpriseAll.objects.filter(firm_name__contains=kw)
+    else:
+        companies = EnterpriseAll.objects.all()
+
+    items_per_page = 5
+    paginator = Paginator(companies, items_per_page)
+    page_number = request.GET.get('page', 1)
+
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    # 获取当前用户的收藏列表
+    user_favorites = set()
+    if request.user.is_authenticated:
+        user_favorites = set(Favorite.objects.filter(user=request.user).values_list('company_id', flat=True))
+
+    context['companies'] = page_obj
+    context['is_paginated'] = True if paginator.num_pages > 1 else False
+    context['paginator'] = paginator
+    context['keyword'] = kw
+    context['segment'] = 'query'
+    context['user_favorites'] = user_favorites
+
+    # 如果是 AJAX 请求，则返回 JSON 数据
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data = []
+        for company in page_obj.object_list:
+            data.append({
+                'id': company.id,
+                'firm_name': company.firm_name,
+                'favorited': company.id in user_favorites,  # 包含收藏状态
+            })
+        return JsonResponse({
+            'data': data,
+            'has_next': page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+            'current_page': page_obj.number,
+            'num_pages': paginator.num_pages,
+            'previous_page_number': page_obj.previous_page_number() if page_obj.has_previous() else None,
+            'next_page_number': page_obj.next_page_number() if page_obj.has_next() else None,
+        })
+
+    return render(request, 'myapp/query.html', context)
+
+@login_required(login_url="/login/")
+def toggle_favorite(request):
+    if request.method == 'POST':
+        company_id = request.POST.get('id')
+        company = EnterpriseAll.objects.get(id=company_id)
+        favorite, created = Favorite.objects.get_or_create(user=request.user, company=company)
+        if not created:
+            # 如果收藏已经存在，则删除它
+            favorite.delete()
+            return JsonResponse({'success': True, 'favorited': False})
+        else:
+            # 如果收藏是新创建的，则返回成功信息
+            return JsonResponse({'success': True, 'favorited': True})
+
+    return JsonResponse({'success': False}, status=400)
+
+
+@login_required(login_url="/login/")
+def favorites(request):
+    # 获取当前登录用户收藏的所有公司
+    favorite_companies = EnterpriseAll.objects.filter(favorite__user=request.user)
+    context = {}
+    kw = request.GET.get('keyword', '')
+
+    # 如果有关键词，则根据关键词过滤公司列表
+    if kw:
+        companies = favorite_companies.filter(firm_name__contains=kw)
+    else:
+        companies = favorite_companies
+
+    items_per_page = 5
+    paginator = Paginator(companies, items_per_page)
+    page_number = request.GET.get('page', 1)
+
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    # 获取当前用户的收藏列表
+    user_favorites = set()
+    if request.user.is_authenticated:
+        user_favorites = set(Favorite.objects.filter(user=request.user).values_list('company_id', flat=True))
+
+    context['companies'] = page_obj
+    context['is_paginated'] = True if paginator.num_pages > 1 else False
+    context['paginator'] = paginator
+    context['keyword'] = kw
+    context['segment'] = 'query'
+    context['user_favorites'] = user_favorites
+    context['segment'] = 'favorites'
+    # 如果是 AJAX 请求，则返回 JSON 数据
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data = []
+        for company in page_obj.object_list:
+            data.append({
+                'id': company.id,
+                'firm_name': company.firm_name,
+                'favorited': company.id in user_favorites,  # 包含收藏状态
+            })
+        return JsonResponse({
+            'data': data,
+            'has_next': page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+            'current_page': page_obj.number,
+            'num_pages': paginator.num_pages,
+            'previous_page_number': page_obj.previous_page_number() if page_obj.has_previous() else None,
+            'next_page_number': page_obj.next_page_number() if page_obj.has_next() else None,
+        })
+    return render(request, 'myapp/favorites.html', context)
+
+@login_required(login_url="/login/")
+def settings(request):
+    return render(request, 'myapp/settings.html', {'segment': 'settings'})

@@ -29,7 +29,6 @@ class EnterpriseAll(models.Model):
     judge_one_year = models.TextField(null=True, blank=True)
     judge_two_year = models.TextField(null=True, blank=True)
     judge_three_year = models.TextField(null=True, blank=True)
-
     class Meta:
         db_table = 'enterprise_all'  # 指定数据库中的表名
 
@@ -46,3 +45,14 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
     instance.profile.save()
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    company = models.ForeignKey(EnterpriseAll, on_delete=models.CASCADE,db_column='company_id')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'company')  # 确保一个用户不能多次收藏同一个公司
+
+    def __str__(self):
+        return f'{self.user.username} 收藏了 {self.company.firm_name}'

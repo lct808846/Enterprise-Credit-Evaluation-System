@@ -16,5 +16,9 @@ urlpatterns = [
     path('company/<str:id>/', index.company_detail, name='company_detail'),
     path('profile/', index.profile, name='profile'),
     path('update_profile_pic/', index.update_profile_pic, name='update_profile_pic'),
-    # re_path(r'^.*\.*', index.pages, name='pages'),
+    path('query', index.query, name='query'),
+    path('favorites', index.favorites, name='favorites'),
+    path('toggle_favorite',index.toggle_favorite, name='toggle_favorite'),
+    path('map', index.map, name='map'),
+    path('settings', index.settings, name='settings'),
 ]

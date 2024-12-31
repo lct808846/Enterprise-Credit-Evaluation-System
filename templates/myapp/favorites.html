@@ -1,0 +1,365 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} 指标查询 {% endblock title %}
+
+{% block content %}
+
+    <div class="header bg-primary pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <!-- Card header -->
+                    <div class="card-header border-0">
+                        <h3 class="mb-0">我的收藏</h3>
+                    </div>
+                    <!-- Light table -->
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush">
+                            <thead class="thead-light">
+                            <tr>
+                                <th scope="col" class="sort" data-sort="firm_name">公司名称</th>
+                                <th scope="col" class="sort" data-sort="firm_name">评分</th>
+                                <th scope="col" class="sort" data-sort="status">收藏</th>
+                            </tr>
+                            </thead>
+                            <tbody id="companies-tbody">
+                            {% for company in companies %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'company_detail' company.id %}"
+                                           class="avatar rounded-circle mr-3"></a>
+                                        <div class="media-body">
+                                            <span class="name mb-0 text-sm">{{ company.firm_name }}</span>
+                                        </div>
+                                    </td>
+                                    <td>100</td>
+                                    <td>
+                                        <!-- 收藏按钮 -->
+                                        <button class="favorite-btn {% if company.id in user_favorites %}active{% endif %}"
+                                                data-id="{{ company.id }}"
+                                                data-favorite-url="{% url 'toggle_favorite' %}">
+                                            <i class="material-icons">favorite</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="13" class="text-center">没有找到数据。</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 分页 -->
+    <div class="card-footer py-4">
+        <nav aria-label="...">
+            <ul class="pagination justify-content-end mb-0" id="pagination-ul">
+                {% if is_paginated %}
+                    <!-- Previous Page -->
+                    {% if companies.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="#" data-page="1">首页</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" data-page="{{ companies.previous_page_number }}">
+                                <i><</i>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">首页</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">
+                                <i><</i>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <!-- First Page -->
+                    {% if companies.number != 1 %}
+
+                        {% if companies.number > 3 %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">...</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+
+                    <!-- Nearby Pages -->
+                    {% for num in paginator.page_range %}
+                        {% if num >= companies.number|add:-2 and num <= companies.number|add:2 %}
+                            {% if companies.number == num %}
+                                <li class="page-item active">
+                                    <a class="page-link" href="#">{{ num }} <span class="sr-only">(current)</span></a>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="#" data-page="{{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Last Page -->
+                    {% if companies.number != paginator.num_pages %}
+                        {% if companies.number < paginator.num_pages|add:-2 %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">...</a>
+                            </li>
+                        {% endif %}
+
+                    {% endif %}
+
+                    <!-- Next Page -->
+                    {% if companies.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="#" data-page="{{ companies.next_page_number }}">
+                                <i>></i>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" data-page="{{ paginator.num_pages }}">末页</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">
+                                <i>></i>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">末页</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+    <!-- 引入 jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        // 定义一个全局变量或对象来保存URL模式
+        window.DJANGO_URLS = {
+            company_detail: "{% url 'company_detail' 0 %}".replace('/0/', '/'), // 使用0作为默认值并移除它
+            toggle_favorite: "{% url 'toggle_favorite' %}"
+        };
+    </script>
+    <script>
+        $(document).ready(function () {
+            function loadCompanies(page, kw) {
+                $.ajax({
+                    url: '{% url "favorites" %}',
+                    data: {
+                        'page': page,
+                        'keyword': kw || '',
+                        'ajax': 'true'
+                    },
+                    method: 'GET',
+                    success: function (response) {
+                        const tbody = $('#companies-tbody');
+                        tbody.empty(); // 清空现有行
+
+                        if (response.data.length === 0) {
+                            var noDataRow = `
+                                <tr>
+                                    <td colspan="3" class="text-center">没有找到数据。</td>
+                                </tr>`;
+                            tbody.append(noDataRow);
+                        } else {
+                            response.data.forEach(function (company) {
+                                var row = `
+                                    <tr>
+                                        <td>
+                                            <a href="${window.DJANGO_URLS.company_detail + company.id}/" class="avatar rounded-circle mr-3"></a>
+                                            <div class="media-body">
+                                                <span class="name mb-0 text-sm">${company.firm_name}</span>
+                                            </div>
+                                        </td>
+                                        <td>100</td>
+                                        <td>
+                                            <!-- 收藏按钮 -->
+                                            <button class="favorite-btn ${company.favorited ? 'active' : ''}" 
+                                                    data-id="${company.id}" 
+                                                    data-favorite-url="${window.DJANGO_URLS.toggle_favorite}">
+                                                <i class="material-icons">favorite</i>
+                                            </button>
+                                        </td>
+                                    </tr>`;
+                                tbody.append(row);
+                            });
+                        }
+
+                        // 更新分页链接状态
+                        updatePagination(response);
+
+                        // 初始化收藏按钮点击事件
+                        initializeFavoriteButtons();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error loading companies:', error);
+                    }
+                });
+            }
+
+            // 初始化收藏按钮点击事件
+            function initializeFavoriteButtons() {
+                // 移除旧的收藏按钮点击事件
+                $(document).off('click', '.favorite-btn');
+
+                // 绑定新的收藏按钮点击事件
+                $(document).on('click', '.favorite-btn', function (event) {
+                    event.preventDefault();
+                    var button = $(this);
+                    var icon = button.find('i'); // 获取图标元素
+
+                    $.ajax({
+                        url: button.data('favorite-url'),
+                        method: 'POST',
+                        data: {
+                            'id': button.data('id'),
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                // 更新收藏按钮的状态和图标样式
+                                button.toggleClass('active');
+                                if (response.favorited) {
+                                    console.log("已收藏");
+                                } else {
+                                    console.log("已取消收藏");
+                                }
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error toggling favorite:', error);
+                        }
+                    });
+                });
+            }
+
+            function updatePagination(response) {
+                const paginationUl = $('#pagination-ul');
+                paginationUl.empty(); // 清空现有分页项
+
+                // 添加首页和上一页按钮
+                let prevPageLink = '<li class="page-item';
+                if (!response.has_previous) {
+                    prevPageLink += ' disabled';
+                }
+                prevPageLink += '"><a class="page-link" href="#" data-page="1">首页</a></li>';
+                paginationUl.append(prevPageLink);
+
+                prevPageLink = '<li class="page-item';
+                if (!response.has_previous) {
+                    prevPageLink += ' disabled';
+                }
+                prevPageLink += '"><a class="page-link" href="#" data-page="' + response.previous_page_number + '"><</a></li>';
+                paginationUl.append(prevPageLink);
+
+                // 添加省略号（如果需要）
+                if (response.current_page > 3) {
+                    paginationUl.append('<li class="page-item disabled"><a class="page-link" href="#">...</a></li>');
+                }
+
+                // 添加附近页码
+                for (let i = Math.max(1, response.current_page - 2); i <= Math.min(response.num_pages, response.current_page + 2); i++) {
+                    let pageItem = '<li class="page-item';
+                    if (i === response.current_page) {
+                        pageItem += ' active';
+                    }
+                    pageItem += '"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
+                    paginationUl.append(pageItem);
+                }
+
+                // 添加省略号（如果需要）
+                if (response.current_page < response.num_pages - 2) {
+                    paginationUl.append('<li class="page-item disabled"><a class="page-link" href="#">...</a></li>');
+                }
+
+                // 添加下一页和末页按钮
+                let nextPageLink = '<li class="page-item';
+                if (!response.has_next) {
+                    nextPageLink += ' disabled';
+                }
+                nextPageLink += '"><a class="page-link" href="#" data-page="' + response.next_page_number + '">></a></li>';
+                paginationUl.append(nextPageLink);
+
+                nextPageLink = '<li class="page-item';
+                if (!response.has_next) {
+                    nextPageLink += ' disabled';
+                }
+                nextPageLink += '"><a class="page-link" href="#" data-page="' + response.num_pages + '">末页</a></li>';
+                paginationUl.append(nextPageLink);
+            }
+
+            // 绑定分页链接点击事件
+            function bindPaginationClickEvents() {
+                // 移除旧的分页链接点击事件
+                $(document).off('click', '#pagination-ul .page-link:not(.disabled)');
+
+                // 绑定新的分页链接点击事件
+                $(document).on('click', '#pagination-ul .page-link:not(.disabled)', function (event) {
+                    event.preventDefault();
+                    let page = $(this).data('page');
+                    let keyword = $('#search-input').val(); // 假设搜索框ID为#search-input
+                    loadCompanies(page, keyword);
+                });
+            }
+
+            // 处理搜索表单提交
+            function bindSearchFormSubmit() {
+                // 移除旧的搜索表单提交事件
+                $('#navbar-search-main').off('submit');
+
+                // 绑定新的搜索表单提交事件
+                $('#navbar-search-main').submit(function (event) {
+                    event.preventDefault();
+                    const keyword = $('#search-input').val();
+                    loadCompanies(1, keyword); // 搜索时从第一页开始
+                });
+
+                // 直接点击搜索按钮
+                $('#search-submit').off('click').click(function (event) {
+                    $('#navbar-search-main').submit();
+                });
+            }
+
+            // 初始化加载
+            loadCompanies({{ companies.number|default:"1" }}, '{{ keyword }}');
+
+            // 确保在文档准备好后立即绑定分页和搜索事件
+            bindPaginationClickEvents();
+            bindSearchFormSubmit();
+
+        });
+    </script>
+{% endblock javascripts %}
+
+
+

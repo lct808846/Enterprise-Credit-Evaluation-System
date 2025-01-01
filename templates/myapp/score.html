@@ -21,132 +21,236 @@
 
     <!-- 页面内容 -->
     <div class="container-fluid mt--6">
-        <div class="col-xl-8 order-xl-1">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="mb-0">评分详情</h3>
+        <div class="row">
+            <!-- 左边：评分详情 -->
+            <div class="col-xl-8 order-xl-1">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">评分详情</h3>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <h6 class="heading-small text-muted mb-4">评分指标</h6>
+                            <div class="pl-lg-4">
+                                <!-- 现有的评分详情表单 -->
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-firm-name">公司名称</label>
+                                            <input type="text" id="input-firm-name" class="form-control"
+                                                   placeholder="公司名称" value="{{ company.firm_name }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-score">总评分</label>
+                                            <input type="number" id="input-score" class="form-control"
+                                                   placeholder="总评分" value="{{ score }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label"
+                                                   for="input-execute">1年内被执行次数</label>
+                                            <input type="number" id="input-execute" class="form-control"
+                                                   value="{{ company.execute_one_year }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-case">1年内立案次数</label>
+                                            <input type="number" id="input-case" class="form-control"
+                                                   value="{{ company.case_one_year }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label"
+                                                   for="input-money">1年内涉案金额（元）</label>
+                                            <input type="number" step="any" id="input-money" class="form-control"
+                                                   value="{{ company.one_all_money }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-judge">1年内裁判次数</label>
+                                            <input type="number" id="input-judge" class="form-control"
+                                                   value="{{ company.judge_one_year }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-money">2年内被执行次数</label>
+                                            <input type="number" step="any" id="input-money" class="form-control"
+                                                   value="{{ company.execute_two_year }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-judge">2年内立案次数</label>
+                                            <input type="number" id="input-judge" class="form-control"
+                                                   value="{{ company.case_two_year }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label"
+                                                   for="input-money">2年内涉案金额（元）</label>
+                                            <input type="number" step="any" id="input-money" class="form-control"
+                                                   value="{{ company.two_all_money }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-judge">2年内裁判次数</label>
+                                            <input type="number" id="input-judge" class="form-control"
+                                                   value="{{ company.judge_two_year }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-money">3年内被执行次数</label>
+                                            <input type="number" step="any" id="input-money" class="form-control"
+                                                   value="{{ company.execute_three_year }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-judge">3年内立案次数</label>
+                                            <input type="number" id="input-judge" class="form-control"
+                                                   value="{{ company.case_three_year }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label"
+                                                   for="input-money">3年内涉案金额（元）</label>
+                                            <input type="number" step="any" id="input-money" class="form-control"
+                                                   value="{{ company.three_all_money }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-judge">3年内裁判次数</label>
+                                            <input type="number" id="input-judge" class="form-control"
+                                                   value="{{ company.judge_three_year }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="my-4"/>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form>
-                        <h6 class="heading-small text-muted mb-4">评分指标</h6>
-                        <div class="pl-lg-4">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-firm-name">公司名称</label>
-                                        <input type="text" id="input-firm-name" class="form-control"
-                                               placeholder="公司名称" value="{{ company.firm_name }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-score">总评分</label>
-                                        <input type="number" id="input-score" class="form-control"
-                                               placeholder="总评分" value="{{ score }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-execute">1年内被执行次数</label>
-                                        <input type="number" id="input-execute" class="form-control"
-                                                value="{{ company.execute_one_year }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-case">1年内立案次数</label>
-                                        <input type="number" id="input-case" class="form-control"
-                                                value="{{ company.case_one_year }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-money">1年内涉案金额（元）</label>
-                                        <input type="number" step="any" id="input-money" class="form-control"
-                                                value="{{ company.one_all_money }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-judge">1年内裁判次数</label>
-                                        <input type="number" id="input-judge" class="form-control"
-                                                value="{{ company.judge_one_year }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-money">2年内被执行次数</label>
-                                        <input type="number" step="any" id="input-money" class="form-control"
-                                                value="{{ company.two_all_money }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-judge">2年内立案次数</label>
-                                        <input type="number" id="input-judge" class="form-control"
-                                                value="{{ company.case_two_year }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-money">2年内涉案金额（元）</label>
-                                        <input type="number" step="any" id="input-money" class="form-control"
-                                                value="{{ company.two_all_money }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-judge">2年内裁判次数</label>
-                                        <input type="number" id="input-judge" class="form-control"
-                                                value="{{ company.judge_two_year }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-money">3年内被执行次数</label>
-                                        <input type="number" step="any" id="input-money" class="form-control"
-                                                value="{{ company.execute_three_year }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-judge">3年内立案次数</label>
-                                        <input type="number" id="input-judge" class="form-control"
-                                                value="{{ company.case_three_year }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-money">3年内涉案金额（元）</label>
-                                        <input type="number" step="any" id="input-money" class="form-control"
-                                                value="{{ company.three_all_money }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-judge">3年内裁判次数</label>
-                                        <input type="number" id="input-judge" class="form-control"
-                                                value="{{ company.judge_three_year }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="my-4"/>
-                        </div>
-                    </form>
+            </div>
+            <!-- 右边：图表 -->
+            <div class="col-xl-4 order-xl-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">放贷建议</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- 图表容器 -->
+                        <canvas id="chart-container" width="400" height="300"></canvas>
+                        <hr class="my-4"/>
+                        <!-- 放贷建议 -->
+                        <div id="loan-advice" style="margin-top: 20px;"></div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 {% endblock content %}
+
+<!-- 特定JS放在此处 -->
+{% block javascripts %}
+    <!-- 如果有需要特定于该页面的JavaScript代码，可以在这里添加 -->
+    <!-- 引入Chart.js库并初始化图表 -->
+    <!-- 引入Chart.js库并初始化得分环图 -->
+    <!-- 引入 ECharts 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script>
+        // 初始化 ECharts 实例
+        var chartDom = document.getElementById('chart-container');
+        var myChart = echarts.init(chartDom);
+        var value = {{ score }}; // 假设这是通过模板引擎传递过来的变量
+
+        // 动态设置颜色的函数
+        function getColorByValue(val) {
+            if (val >= 90) {
+                return '#3cba54'; // 绿色
+            } else if (val >= 60) {
+                return '#ffcc00'; // 黄色
+            } else {
+                return '#ff4d4d'; // 红色
+            }
+        }
+
+        // 根据得分给出放贷建议的函数
+        function getLoanAdvice(val) {
+            let advice;
+            if (val >= 90) {
+                advice = "评分很高，建议可以考虑提供更优惠的贷款条件。";
+            } else if (val >= 60) {
+                advice = "评分良好，建议可以给予标准贷款条件。";
+            } else {
+                advice = "评分较低，建议谨慎考虑贷款申请，可能需要进一步审查或调整贷款条件。";
+            }
+            return `<p><strong></strong> ${advice}</p>`;
+        }
+
+        // 配置项
+        var option = {
+            series: [
+                {
+                    type: 'gauge',
+                    center: ['50%', '50%'],
+                    radius: '100%',
+                    startAngle: 90,
+                    endAngle: -270,
+                    pointer: {show: false},
+                    progress: {
+                        show: true,
+                        overlap: false,
+                        roundCap: true,
+                        clip: false,
+                        itemStyle: {color: getColorByValue(value)}
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            width: 15,
+                            color: [[1, '#d3d3d3']] // 更改为灰色
+                        }
+                    },
+                    splitLine: {show: false, distance: 0, length: 1033},
+                    axisTick: {show: false},
+                    axisLabel: {show: false, distance: 50},
+                    data: [{value: value, detail: {valueAnimation: false, offsetCenter: ['0%', '0%'], fontSize: 40}}],
+                    detail: {
+                        color: getColorByValue(value),
+                        formatter: '{value}'
+                    }
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        // 将放贷建议插入到DOM中
+        document.getElementById('loan-advice').innerHTML = getLoanAdvice(value);
+    </script>
+{% endblock javascripts %}

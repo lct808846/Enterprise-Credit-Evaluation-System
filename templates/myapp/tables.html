@@ -37,11 +37,11 @@
                             {% for stock in companies %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'company_detail' stock.id %}"
-                                           class="avatar rounded-circle mr-3">
-                                        </a>
                                         <div class="media-body">
-                                            <span class="name mb-0 text-sm">{{ stock.firm_name }}</span>
+                                            <a href="{% url 'company_detail' stock.id %}"
+                                               class="name mb-0 text-sm no-style-link">
+                                                {{ stock.firm_name }}
+                                            </a>
                                         </div>
                                     </td>
                                     <td>{{ stock.est_date }}</td>
@@ -164,9 +164,22 @@
     </script>
     <script>
         $(document).ready(function () {
+            function updateUrlParameter(param, paramVal) {
+                var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                var params = new URLSearchParams(window.location.search);
+
+                if (paramVal !== undefined && paramVal !== null) {
+                    params.set(param, paramVal);
+                } else {
+                    params.delete(param);
+                }
+
+                newUrl += "?" + params.toString();
+                history.pushState({}, '', newUrl);
+            }
+
             function loadCompanies(page, kw) {
                 $.ajax({
-
                     url: '{% url "tables" %}',
                     data: {
                         'page': page,
@@ -180,32 +193,35 @@
 
                         if (response.data.length === 0) {
                             var noDataRow = `
-                        <tr>
-                            <td colspan="4" class="text-center">没有找到相关数据。</td>
-                        </tr>`;
+                                <tr>
+                                    <td colspan="4" class="text-center">没有找到相关数据。</td>
+                                </tr>`;
                             tbody.append(noDataRow);
                         } else {
                             response.data.forEach(function (company) {
                                 var row = `
-                            <tr>
-                                <td>
-                                   <a href="${window.DJANGO_URLS.company_detail + company.id}/" class="avatar rounded-circle mr-3">
-{#                                        <img alt="Image placeholder" src="/static/assets/img/theme/bootstrap.jpg">#}
-                                    </a>
-                                    <div class="media-body">
-                                        <span class="name mb-0 text-sm">${company.firm_name}</span>
-                                    </div>
-                                </td>
-                                <td>${company.est_date}</td>
-                                <td>${company.legal_rep}</td>
-                                <td style="word-wrap: break-word; white-space: normal;">${company.ope_scope}</td>
-                            </tr>`;
+                                    <tr>
+                                        <td>
+                                            <div class="media-body">
+                                                <a href="${window.DJANGO_URLS.company_detail + company.id}/" class="name mb-0 text-sm no-style-link">
+                                                    ${company.firm_name}
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td>${company.est_date}</td>
+                                        <td>${company.legal_rep}</td>
+                                        <td style="word-wrap: break-word; white-space: normal;">${company.ope_scope}</td>
+                                    </tr>`;
                                 tbody.append(row);
                             });
                         }
 
                         // 更新分页链接状态
                         updatePagination(response);
+
+                        // 更新URL参数
+                        updateUrlParameter('page', page);
+                        updateUrlParameter('keyword', kw || '');
                     },
                     error: function (xhr, status, error) {
                         console.error('Error loading companies:', error);
@@ -280,6 +296,7 @@
             $('#navbar-search-main').submit(function (event) {
                 event.preventDefault();
                 const keyword = $('#search-input').val();
+                updateUrlParameter('keyword', keyword);
                 loadCompanies(1, keyword); // 搜索时从第一页开始
             });
 
@@ -288,8 +305,19 @@
                 $('#navbar-search-main').submit();
             });
 
+            // 监听popstate事件以响应用户点击返回按钮
+            $(window).on('popstate', function(event) {
+                let urlParams = new URLSearchParams(window.location.search);
+                let page = urlParams.get('page') || {{ companies.number|default:"1" }};
+                let keyword = urlParams.get('keyword') || '';
+                loadCompanies(page, keyword);
+            });
+
             // 初始化加载
-            loadCompanies({{ companies.number|default:"1" }}, '{{ keyword }}');
+            let urlParams = new URLSearchParams(window.location.search);
+            let initialPage = urlParams.get('page') || {{ companies.number|default:"1" }};
+            let initialKeyword = urlParams.get('keyword') || '';
+            loadCompanies(initialPage, initialKeyword);
         });
     </script>
 {% endblock javascripts %}

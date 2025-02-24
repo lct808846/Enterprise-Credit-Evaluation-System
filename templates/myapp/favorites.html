@@ -36,10 +36,11 @@
                             {% for company in companies %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'company_detail' company.id %}"
-                                           class="avatar rounded-circle mr-3"></a>
                                         <div class="media-body">
-                                            <span class="name mb-0 text-sm">{{ company.firm_name }}</span>
+                                            <a href="{% url 'company_detail' company.id %}"
+                                               class="name mb-0 text-sm no-style-link">
+                                                {{ company.firm_name }}
+                                            </a>
                                         </div>
                                     </td>
                                     <td>{{ company.score }}</td>
@@ -196,11 +197,12 @@
                                 var row = `
                                     <tr>
                                         <td>
-                                            <a href="${window.DJANGO_URLS.company_detail + company.id}/" class="avatar rounded-circle mr-3"></a>
-                                            <div class="media-body">
-                                                <span class="name mb-0 text-sm">${company.firm_name}</span>
-                                            </div>
-                                        </td>
+                                        <div class="media-body">
+                                            <a href="${window.DJANGO_URLS.company_detail + company.id}/" class="name mb-0 text-sm no-style-link">
+                                                   ${company.firm_name}
+                                            </a>
+                                        </div>
+                                    </td>
                                         <td>${company.score}</td>
                                         <td>
                                             <!-- 收藏按钮 -->
@@ -229,14 +231,11 @@
 
             // 初始化收藏按钮点击事件
             function initializeFavoriteButtons() {
-                // 移除旧的收藏按钮点击事件
                 $(document).off('click', '.favorite-btn');
 
-                // 绑定新的收藏按钮点击事件
                 $(document).on('click', '.favorite-btn', function (event) {
                     event.preventDefault();
                     var button = $(this);
-                    var icon = button.find('i'); // 获取图标元素
 
                     $.ajax({
                         url: button.data('favorite-url'),
@@ -247,13 +246,11 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                // 更新收藏按钮的状态和图标样式
                                 button.toggleClass('active');
-                                if (response.favorited) {
-                                    console.log("已收藏");
-                                } else {
-                                    console.log("已取消收藏");
-                                }
+                                let currentPage = $('#pagination-ul .page-item.active a').data('page') || 1;
+                                let keyword = $('#search-input').val();
+                                updateHistory(currentPage, keyword);
+                                loadCompanies(currentPage, keyword);
                             }
                         },
                         error: function (xhr, status, error) {
@@ -320,43 +317,65 @@
 
             // 绑定分页链接点击事件
             function bindPaginationClickEvents() {
-                // 移除旧的分页链接点击事件
                 $(document).off('click', '#pagination-ul .page-link:not(.disabled)');
-
-                // 绑定新的分页链接点击事件
                 $(document).on('click', '#pagination-ul .page-link:not(.disabled)', function (event) {
                     event.preventDefault();
                     let page = $(this).data('page');
-                    let keyword = $('#search-input').val(); // 假设搜索框ID为#search-input
+                    let keyword = $('#search-input').val();
+                    updateHistory(page, keyword);
                     loadCompanies(page, keyword);
                 });
             }
 
             // 处理搜索表单提交
             function bindSearchFormSubmit() {
-                // 移除旧的搜索表单提交事件
                 $('#navbar-search-main').off('submit');
-
-                // 绑定新的搜索表单提交事件
                 $('#navbar-search-main').submit(function (event) {
                     event.preventDefault();
                     const keyword = $('#search-input').val();
-                    loadCompanies(1, keyword); // 搜索时从第一页开始
+                    updateHistory(1, keyword); // 搜索时从第一页开始
+                    loadCompanies(1, keyword);
                 });
 
-                // 直接点击搜索按钮
                 $('#search-submit').off('click').click(function (event) {
                     $('#navbar-search-main').submit();
                 });
             }
 
-            // 初始化加载
-            loadCompanies({{ companies.number|default:"1" }}, '{{ keyword }}');
+            // 当前页面加载时，解析URL中的筛选条件并加载公司列表
+            function initPage() {
+                const urlParams = new URLSearchParams(window.location.search);
+                let page = urlParams.get('page') || 1;
+                let kw = urlParams.get('keyword') || '';
+                loadCompanies(page, kw);
+            }
+
+            // 更新历史记录并修改URL
+            function updateHistory(page, kw) {
+                const url = new URL(window.location.href);
+                const params = new URLSearchParams(url.search);
+
+                if (page) params.set('page', page);
+                else params.delete('page');
+
+                if (kw) params.set('keyword', kw);
+                else params.delete('keyword');
+
+                url.search = params.toString();
+                window.history.pushState({ path: url.toString() }, '', url.toString());
+            }
+
+            // 监听popstate事件以响应浏览器的前进/后退操作
+            $(window).on('popstate', function(event) {
+                initPage(); // 根据新的URL重新加载数据
+            });
+
+            // 初始化页面
+            initPage();
 
             // 确保在文档准备好后立即绑定分页和搜索事件
             bindPaginationClickEvents();
             bindSearchFormSubmit();
-
         });
     </script>
 {% endblock javascripts %}

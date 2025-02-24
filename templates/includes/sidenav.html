@@ -9,12 +9,12 @@
             <div class="collapse navbar-collapse" id="sidenav-collapse-main">
                 <!-- Nav items -->
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link {% if 'index' in segment %} active {% endif %}" href="/">
-                            <i class="ni ni-tv-2 text-primary"></i>
-                            <span class="nav-link-text">仪表板</span>
-                        </a>
-                    </li>
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link {% if 'index' in segment %} active {% endif %}" href="/">#}
+{#                            <i class="ni ni-tv-2 text-primary"></i>#}
+{#                            <span class="nav-link-text">首页</span>#}
+{#                        </a>#}
+{#                    </li>#}
                     <li class="nav-item">
                         <a class="nav-link {% if 'tables' in segment %} active {% endif %}" href="{% url 'tables' %}">
                             <i class="ni ni-bullet-list-67 text-default"></i>
@@ -24,13 +24,7 @@
                     <li class="nav-item">
                         <a class="nav-link {% if 'query' in segment %} active {% endif %}" href="{% url 'query' %}">
                             <i class="ni ni-planet text-orange"></i>
-                            <span class="nav-link-text">指标查询</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if 'map' in segment %} active {% endif %}" href="{% url 'map' %}">
-                            <i class="ni ni-pin-3 text-primary"></i>
-                            <span class="nav-link-text">地图</span>
+                            <span class="nav-link-text">企业放贷评分</span>
                         </a>
                     </li>
                     <li class="nav-item">

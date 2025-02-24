@@ -36,29 +36,42 @@
     <!-- Page plugins -->
     <!-- Argon CSS -->
     <link rel="stylesheet" href="/static/assets/css/argon.css?v=1.2.0" type="text/css">
-  <style>
-    .favorite-btn {
-        background: none; /* 移除背景色 */
-        border: none;     /* 移除边框 */
-        padding: 0;       /* 移除内边距 */
-        cursor: pointer;  /* 鼠标悬停时显示指针 */
-        color: gray;      /* 默认情况下，图标为灰色 */
-        transition: color 0.3s ease;
-        outline: none;    /* 移除聚焦时的默认边框 */
-    }
+    <style>
+        .favorite-btn {
+            background: none; /* 移除背景色 */
+            border: none; /* 移除边框 */
+            padding: 0; /* 移除内边距 */
+            cursor: pointer; /* 鼠标悬停时显示指针 */
+            color: gray; /* 默认情况下，图标为灰色 */
+            transition: color 0.3s ease;
+            outline: none; /* 移除聚焦时的默认边框 */
+        }
 
-    .favorite-btn.active {
-        color: red; /* 收藏时，图标变为红色 */
-    }
+        .favorite-btn.active {
+            color: red; /* 收藏时，图标变为红色 */
+        }
 
-    .favorite-btn:hover {
-        color: darkred; /* 悬停时改变颜色以提供反馈 */
-    }
+        .favorite-btn:hover {
+            color: darkred; /* 悬停时改变颜色以提供反馈 */
+        }
 
-    .favorite-btn:focus {
-        outline: none; /* 确保聚焦时没有边框 */
-    }
-</style>
+        .favorite-btn:focus {
+            outline: none; /* 确保聚焦时没有边框 */
+        }
+
+        /* 定义一个类名以应用到特定的链接 */
+        .no-style-link {
+            text-decoration: none; /* 去掉下划线 */
+            color: inherit; /* 继承父元素的颜色 */
+        }
+
+        /* 如果你还想确保鼠标悬停时也没有样式变化 */
+        .no-style-link:hover,
+        .no-style-link:focus {
+            text-decoration: none; /* 依然没有下划线 */
+            color: inherit; /* 颜色不变 */
+        }
+    </style>
     <!-- Specific CSS goes HERE -->
     {% block stylesheets %}{% endblock stylesheets %}
 

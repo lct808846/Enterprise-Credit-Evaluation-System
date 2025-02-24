@@ -1,6 +1,8 @@
 from django import template
 from django.contrib import messages
-
+from django.db.models import Q, F, Value
+from django.db.models.functions import Coalesce, Cast
+from django.db.models import FloatField
 from django.http import HttpResponse,JsonResponse
 from django.shortcuts import redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -24,7 +26,8 @@ def index(request):
     context = {'segment': 'index'}
 
     html_template = loader.get_template('myapp/index.html')
-    return HttpResponse(html_template.render(context, request))
+    return redirect('tables')
+    # return HttpResponse(html_template.render(context, request))
 
 def Login(request):
     form = LoginForm(request.POST or None)
@@ -145,14 +148,6 @@ def profile(request):
     return render(request, 'myapp/profile.html', context)
 
 @login_required(login_url="/login/")
-def map(request):
-    context = {}
-    context['segment'] = 'map'
-    kw = request.GET.get('keyword', '')
-    context['keyword'] = kw
-    return render(request, 'myapp/map.html', context)
-
-@login_required(login_url="/login/")
 def update_profile_pic(request):
     if request.method == 'POST':
         profile_pic = request.FILES.get('profile_pic')
@@ -165,16 +160,55 @@ def update_profile_pic(request):
             user_profile.save()
     return redirect('profile')
 
+
 @login_required(login_url="/login/")
 def query(request):
     context = {}
     kw = request.GET.get('keyword', '')
 
-    # 如果有关键词，则根据关键词过滤公司列表
+    # 构建过滤器字典
+    filters = {
+        'execute_min': request.GET.get('execute_min'),
+        'execute_max': request.GET.get('execute_max'),
+        'case_min': request.GET.get('case_min'),
+        'case_max': request.GET.get('case_max'),
+        'all_money_min': request.GET.get('all_money_min'),
+        'all_money_max': request.GET.get('all_money_max'),
+        'judge_min': request.GET.get('judge_min'),
+        'judge_max': request.GET.get('judge_max'),
+    }
+
+    # 过滤公司列表
+    companies = EnterpriseAll.objects.annotate(
+        execute_total=Cast(Coalesce(F('execute_three_year'), Value('0')), output_field=FloatField()),
+
+        case_total=Cast(Coalesce(F('case_three_year'), Value('0')), output_field=FloatField()),
+
+        all_money_total=Cast(Coalesce(F('three_all_money'), Value('0')), output_field=FloatField()),
+
+        judge_total=Cast(Coalesce(F('judge_three_year'), Value('0')), output_field=FloatField())
+    )
+
     if kw:
-        companies = EnterpriseAll.objects.filter(firm_name__contains=kw)
-    else:
-        companies = EnterpriseAll.objects.all()
+        companies = companies.filter(firm_name__contains=kw)
+
+    # 应用筛选条件
+    if filters['execute_min']:
+        companies = companies.filter(execute_total__gte=filters['execute_min'])
+    if filters['execute_max']:
+        companies = companies.filter(execute_total__lte=filters['execute_max'])
+    if filters['case_min']:
+        companies = companies.filter(case_total__gte=filters['case_min'])
+    if filters['case_max']:
+        companies = companies.filter(case_total__lte=filters['case_max'])
+    if filters['all_money_min']:
+        companies = companies.filter(all_money_total__gte=filters['all_money_min'])
+    if filters['all_money_max']:
+        companies = companies.filter(all_money_total__lte=filters['all_money_max'])
+    if filters['judge_min']:
+        companies = companies.filter(judge_total__gte=filters['judge_min'])
+    if filters['judge_max']:
+        companies = companies.filter(judge_total__lte=filters['judge_max'])
 
     items_per_page = 30
     paginator = Paginator(companies, items_per_page)
@@ -182,19 +216,17 @@ def query(request):
 
     try:
         page_obj = paginator.page(page_number)
-    except PageNotAnInteger:
+    except (PageNotAnInteger, EmptyPage):
         page_obj = paginator.page(1)
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
 
     # 获取当前用户的收藏列表
     user_favorites = set()
     if request.user.is_authenticated:
         user_favorites = set(Favorite.objects.filter(user=request.user).values_list('company_id', flat=True))
 
-    # 为每家公司计算评分
+    # 为每家公司计算评分（如果评分不是数据库中的一个字段）
     for company in page_obj.object_list:
-        company.score = calculate_company_score(company)
+        company.score = calculate_company_score(company)  # 如果评分已经存储在数据库中，则不需要这一步
 
     context['companies'] = page_obj
     context['is_paginated'] = True if paginator.num_pages > 1 else False
@@ -255,7 +287,7 @@ def favorites(request):
     else:
         companies = favorite_companies
 
-    items_per_page = 5
+    items_per_page = 12
     paginator = Paginator(companies, items_per_page)
     page_number = request.GET.get('page', 1)
 

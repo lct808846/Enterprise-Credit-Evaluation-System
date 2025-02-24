@@ -20,7 +20,6 @@ urlpatterns = [
     path('query', index.query, name='query'),
     path('favorites', index.favorites, name='favorites'),
     path('toggle_favorite',index.toggle_favorite, name='toggle_favorite'),
-    path('map', index.map, name='map'),
     path('settings', index.settings, name='settings'),
     path('update_weights', index.update_weights, name='update_weights'),
 ]

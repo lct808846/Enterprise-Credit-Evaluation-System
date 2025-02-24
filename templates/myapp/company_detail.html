@@ -22,87 +22,105 @@
 
     <!-- 页面内容 -->
     <div class="container-fluid mt--6">
-        <div class="col-xl-8 order-xl-1">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="mb-0">公司详情</h3>
-                </div>
-                <div class="card-body">
-                    <form>
-                        <h6 class="heading-small text-muted mb-4">公司信息</h6>
-                        <div class="pl-lg-4">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-firm-name">公司名称</label>
-                                        <input type="text" id="input-firm-name" class="form-control"
-                                               placeholder="公司名称" value="{{ company.firm_name }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-legal-rep">法定代表人</label>
-                                        <input type="text" id="input-legal-rep" class="form-control"
-                                               placeholder="法定代表人" value="{{ company.legal_rep }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-est-date">成立日期</label>
-                                        <input type="date" id="input-est-date" class="form-control"
-                                               value="{{ company.est_date }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-open-date">开业日期</label>
-                                        <input type="date" id="input-open-date" class="form-control"
-                                               value="{{ company.open_date }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-bd-longitude">经度</label>
-                                        <input type="number" step="any" id="input-bd-longitude" class="form-control"
-                                               placeholder="经度" value="{{ company.bd_longitude }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-bd-latitude">纬度</label>
-                                        <input type="number" step="any" id="input-bd-latitude" class="form-control"
-                                               placeholder="纬度" value="{{ company.bd_latitude }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-control-label" for="input-reg-cap">注册资本（万元）</label>
-                                        <input type="number" step="any" id="input-reg-cap" class="form-control"
-                                               placeholder="无" value="{{ company.reg_cap }}" readonly>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="my-4"/>
-                            <!-- 经营范围 -->
+        <div class="row">
+            <!-- 公司详情 -->
+            <div class="col-xl-8 order-xl-1">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">公司详情</h3>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <h6 class="heading-small text-muted mb-4">公司信息</h6>
                             <div class="pl-lg-4">
-                                <div class="form-group">
-                                    <label class="form-control-label">经营范围</label>
-                                    <textarea rows="4" class="form-control" placeholder="请输入经营范围"
-                                              readonly>{{ company.ope_scope }}</textarea>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-firm-name">公司名称</label>
+                                            <input type="text" id="input-firm-name" class="form-control"
+                                                   placeholder="公司名称" value="{{ company.firm_name }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-legal-rep">法定代表人</label>
+                                            <input type="text" id="input-legal-rep" class="form-control"
+                                                   placeholder="法定代表人" value="{{ company.legal_rep }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-est-date">成立日期</label>
+                                            <input type="date" id="input-est-date" class="form-control"
+                                                   value="{{ company.est_date }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-open-date">开业日期</label>
+                                            <input type="date" id="input-open-date" class="form-control"
+                                                   value="{{ company.open_date }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="input-reg-cap">注册资本（万元）</label>
+                                            <input type="number" step="any" id="input-reg-cap" class="form-control"
+                                                   placeholder="无" value="{{ company.reg_cap }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="my-4"/>
+                                <!-- 经营范围 -->
+                                <div class="pl-lg-4">
+                                    <div class="form-group">
+                                        <label class="form-control-label">经营范围</label>
+                                        <textarea rows="4" class="form-control" placeholder="请输入经营范围"
+                                                  readonly>{{ company.ope_scope }}</textarea>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 地图 -->
+            <div class="col-xl-4 order-xl-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">公司位置</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="company-map" style="height: 400px;"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-
 {% endblock content %}
+{% block javascripts %}
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=94e929f9d53a0a71ccf856889a4e951c"></script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    // 创建地图实例，并设置初始位置和缩放级别
+    var map = new AMap.Map('company-map', {
+        zoom: 15, // 设置地图缩放级别
+        center: [{{ company.bd_longitude }}, {{ company.bd_latitude }}] // 设置地图中心点坐标
+    });
+    
+    // 添加标记
+    var marker = new AMap.Marker({
+        position: new AMap.LngLat({{ company.bd_longitude }}, {{ company.bd_latitude }}),   // 标记的位置
+        title: "{{ company.firm_name }}"
+    });
+
+    // 将标记添加到地图上
+    map.add(marker);
+});
+</script>
+{% endblock javascripts %}

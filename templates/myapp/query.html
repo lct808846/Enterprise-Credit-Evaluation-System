@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
-{% block title %} 指标查询 {% endblock title %}
+{% block title %} 企业放贷评分 {% endblock title %}
 
 {% block content %}
 
@@ -8,11 +8,103 @@
         <div class="container-fluid">
             <div class="header-body">
                 <div class="row align-items-center py-4">
+                    <button type="button" class="btn mb-3" style="background-color: white;  border-color: #007bff;"
+                            data-toggle="modal" data-target="#filterModal">
+                        筛选
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+    <!-- 筛选按钮 -->
 
+
+    <!-- 模态框 (Modal) -->
+    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">筛选条件</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- 筛选表单 -->
+                    <!-- 筛选表单 -->
+                    <form id="filter-form" method="get">
+                        <div class="container">
+                            <div class="row">
+                                <!-- 执行情况筛选 -->
+                                <div class="form-group col-md-6">
+                                    <label for="execute_min">执行情况最小值:</label>
+                                    <input type="number" class="form-control" id="execute_min" name="execute_min"
+                                           min="0">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="execute_max">执行情况最大值:</label>
+                                    <input type="number" class="form-control" id="execute_max" name="execute_max"
+                                           min="0">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- 案件数量筛选 -->
+                                <div class="form-group col-md-6">
+                                    <label for="case_min">案件数量最小值:</label>
+                                    <input type="number" class="form-control" id="case_min" name="case_min" min="0">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="case_max">案件数量最大值:</label>
+                                    <input type="number" class="form-control" id="case_max" name="case_max" min="0">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- 总金额筛选 -->
+                                <div class="form-group col-md-6">
+                                    <label for="all_money_min">总金额最小值:</label>
+                                    <input type="number" class="form-control" id="all_money_min" name="all_money_min"
+                                           min="0">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="all_money_max">总金额最大值:</label>
+                                    <input type="number" class="form-control" id="all_money_max" name="all_money_max"
+                                           min="0">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- 判决情况筛选 -->
+                                <div class="form-group col-md-6">
+                                    <label for="judge_min">判决情况最小值:</label>
+                                    <input type="number" class="form-control" id="judge_min" name="judge_min" min="0">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="judge_max">判决情况最大值:</label>
+                                    <input type="number" class="form-control" id="judge_max" name="judge_max" min="0">
+                                </div>
+                            </div>
+
+                            <!-- 添加隐藏字段以保留当前页面和其他查询参数 -->
+                            {% if request.GET.page %}
+                                <input type="hidden" name="page" value="{{ request.GET.page }}">
+                            {% endif %}
+                            {% if request.GET.keyword %}
+                                <input type="hidden" name="keyword" value="{{ request.GET.keyword }}">
+                            {% endif %}
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="submit" form="filter-form" class="btn btn-primary">应用筛选</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Page content -->
     <div class="container-fluid mt--6">
         <div class="row">
@@ -20,7 +112,7 @@
                 <div class="card">
                     <!-- Card header -->
                     <div class="card-header border-0">
-                        <h3 class="mb-0">指标查询</h3>
+                        <h3 class="mb-0">企业放贷评分</h3>
                     </div>
                     <!-- Light table -->
                     <div class="table-responsive">
@@ -36,10 +128,11 @@
                             {% for company in companies %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'company_detail' company.id %}"
-                                           class="avatar rounded-circle mr-3"></a>
                                         <div class="media-body">
-                                            <span class="name mb-0 text-sm">{{ company.firm_name }}</span>
+                                            <a href="{% url 'company_detail' company.id %}"
+                                               class="name mb-0 text-sm no-style-link">
+                                                {{ company.firm_name }}
+                                            </a>
                                         </div>
                                     </td>
                                     <td>{{ company.score }}</td>
@@ -172,53 +265,68 @@
     </script>
     <script>
         $(document).ready(function () {
-            function loadCompanies(page, kw) {
+            // 获取所有的筛选条件
+            function getFilters() {
+                return {
+                    'execute_min': $('#execute_min').val(),
+                    'execute_max': $('#execute_max').val(),
+                    'case_min': $('#case_min').val(),
+                    'case_max': $('#case_max').val(),
+                    'all_money_min': $('#all_money_min').val(),
+                    'all_money_max': $('#all_money_max').val(),
+                    'judge_min': $('#judge_min').val(),
+                    'judge_max': $('#judge_max').val(),
+                };
+            }
+
+            // 加载公司列表并更新URL
+            function loadCompanies(page, kw, filters) {
+                updateUrlWithFilters(page, kw, filters);
+
                 $.ajax({
                     url: '{% url "query" %}',
                     data: {
                         'page': page,
                         'keyword': kw || '',
-                        'ajax': 'true'
+                        ...filters,
+                        'ajax': 'true',
                     },
                     method: 'GET',
                     success: function (response) {
                         const tbody = $('#companies-tbody');
-                        tbody.empty(); // 清空现有行
+                        tbody.empty();
 
                         if (response.data.length === 0) {
                             var noDataRow = `
-                                <tr>
-                                    <td colspan="3" class="text-center">没有找到相关数据。</td>
-                                </tr>`;
+                        <tr>
+                            <td colspan="3" class="text-center">没有找到相关数据。</td>
+                        </tr>`;
                             tbody.append(noDataRow);
                         } else {
                             response.data.forEach(function (company) {
                                 var row = `
-                                    <tr>
-                                        <td>
-                                            <a href="${window.DJANGO_URLS.company_detail + company.id}/" class="avatar rounded-circle mr-3"></a>
-                                            <div class="media-body">
-                                                <span class="name mb-0 text-sm">${company.firm_name}</span>
-                                            </div>
-                                        </td>
-                                        <td>${company.score}</td>
-                                        <td>
-                                            <!-- 收藏按钮 -->
-                                            <button class="favorite-btn ${company.favorited ? 'active' : ''}" 
-                                                    data-id="${company.id}" 
-                                                    data-favorite-url="${window.DJANGO_URLS.toggle_favorite}">
-                                                <i class="material-icons">favorite</i>
-                                            </button>
-                                        </td>
-                                    </tr>`;
+                            <tr>
+                                <td>
+                                    <div class="media-body">
+                                        <a href="${window.DJANGO_URLS.company_detail + company.id}/" class="name mb-0 text-sm no-style-link">
+                                               ${company.firm_name}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>${company.score}</td>
+                                <td>
+                                    <!-- 收藏按钮 -->
+                                    <button class="favorite-btn ${company.favorited ? 'active' : ''}" 
+                                            data-id="${company.id}" 
+                                            data-favorite-url="${window.DJANGO_URLS.toggle_favorite}">
+                                        <i class="material-icons">favorite</i>
+                                    </button>
+                                </td>
+                            </tr>`;
                                 tbody.append(row);
                             });
                         }
-
-                        // 更新分页链接状态
                         updatePagination(response);
-
-                        // 初始化收藏按钮点击事件
                         initializeFavoriteButtons();
                     },
                     error: function (xhr, status, error) {
@@ -227,12 +335,20 @@
                 });
             }
 
+            // 更新URL以反映当前的筛选条件
+            function updateUrlWithFilters(page, kw, filters) {
+                const url = new URL(window.location.href);
+                url.search = new URLSearchParams({
+                    'page': page,
+                    'keyword': kw || '',
+                    ...filters
+                }).toString();
+                window.history.pushState({path: url.toString()}, '', url.toString());
+            }
+
             // 初始化收藏按钮点击事件
             function initializeFavoriteButtons() {
-                // 移除旧的收藏按钮点击事件
                 $(document).off('click', '.favorite-btn');
-
-                // 绑定新的收藏按钮点击事件
                 $(document).on('click', '.favorite-btn', function (event) {
                     event.preventDefault();
                     var button = $(this);
@@ -254,6 +370,10 @@
                                 } else {
                                     console.log("已取消收藏");
                                 }
+                                // 重新加载当前页面的数据以反映收藏状态的变化
+                                let currentPage = $('#pagination-ul .page-item.active a').data('page') || 1;
+                                let keyword = $('#search-input').val();
+                                loadCompanies(currentPage, keyword, getFilters());
                             }
                         },
                         error: function (xhr, status, error) {
@@ -263,6 +383,7 @@
                 });
             }
 
+            // 更新分页链接状态
             function updatePagination(response) {
                 const paginationUl = $('#pagination-ul');
                 paginationUl.empty(); // 清空现有分页项
@@ -316,47 +437,78 @@
                 }
                 nextPageLink += '"><a class="page-link" href="#" data-page="' + response.num_pages + '">末页</a></li>';
                 paginationUl.append(nextPageLink);
+
+                // 绑定分页链接点击事件
+                bindPaginationClickEvents(getFilters());
             }
 
             // 绑定分页链接点击事件
-            function bindPaginationClickEvents() {
-                // 移除旧的分页链接点击事件
+            function bindPaginationClickEvents(filters) {
                 $(document).off('click', '#pagination-ul .page-link:not(.disabled)');
-
-                // 绑定新的分页链接点击事件
                 $(document).on('click', '#pagination-ul .page-link:not(.disabled)', function (event) {
                     event.preventDefault();
                     let page = $(this).data('page');
-                    let keyword = $('#search-input').val(); // 假设搜索框ID为#search-input
-                    loadCompanies(page, keyword);
+                    let keyword = $('#search-input').val();
+                    loadCompanies(page, keyword, filters);
                 });
             }
 
             // 处理搜索表单提交
             function bindSearchFormSubmit() {
-                // 移除旧的搜索表单提交事件
                 $('#navbar-search-main').off('submit');
-
-                // 绑定新的搜索表单提交事件
                 $('#navbar-search-main').submit(function (event) {
                     event.preventDefault();
                     const keyword = $('#search-input').val();
-                    loadCompanies(1, keyword); // 搜索时从第一页开始
+                    loadCompanies(1, keyword, getFilters()); // 搜索时从第一页开始
                 });
 
-                // 直接点击搜索按钮
                 $('#search-submit').off('click').click(function (event) {
                     $('#navbar-search-main').submit();
                 });
             }
 
-            // 初始化加载
-            loadCompanies({{ companies.number|default:"1" }}, '{{ keyword }}');
+            // 绑定筛选表单提交事件
+            function bindFilterFormSubmit() {
+                $('#filter-form').off('submit');
+                $('#filter-form').submit(function (event) {
+                    event.preventDefault();
+                    let currentPage = $('#pagination-ul .page-item.active a').data('page') || 1;
+                    let keyword = $('#search-input').val();
+                    loadCompanies(currentPage, keyword, getFilters());
+                });
 
-            // 确保在文档准备好后立即绑定分页和搜索事件
-            bindPaginationClickEvents();
+                $('#filter-submit').off('click').click(function (event) {
+                    $('#filter-form').submit();
+                });
+            }
+
+            // 监听popstate事件以处理返回按钮
+            window.addEventListener('popstate', function (event) {
+                if (event.state && event.state.path) {
+                    const url = new URL(event.state.path);
+                    const params = new URLSearchParams(url.search);
+                    loadCompanies(
+                        params.get('page') || 1,
+                        params.get('keyword') || '',
+                        Object.fromEntries(params.entries())
+                    );
+                }
+            });
+
+            // 确保在文档加载完成后初始化所有交互功能
+            bindPaginationClickEvents(getFilters());
             bindSearchFormSubmit();
+            bindFilterFormSubmit();
 
+            // 从URL中读取初始筛选条件
+            const initialParams = new URLSearchParams(window.location.search);
+            const initialFilters = {};
+            for (const [key, value] of initialParams.entries()) {
+                if (key !== 'page' && key !== 'keyword') {
+                    initialFilters[key] = value;
+                }
+            }
+            loadCompanies(initialParams.get('page') || 1, initialParams.get('keyword'), initialFilters);
         });
     </script>
 {% endblock javascripts %}
